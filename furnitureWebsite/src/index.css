@@ -1,0 +1,15 @@
+:root {
+  color-scheme: light;
+}
+
+body {
+  background-color: #ffffff !important;
+  color: #333333 !important;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* This prevents the whole page from scrolling so only the containers do */
+}
