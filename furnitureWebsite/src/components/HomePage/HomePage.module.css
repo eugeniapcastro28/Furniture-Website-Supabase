@@ -6,20 +6,19 @@
 
 .heroSlider {
   width: 100%;
-  /* Define the height of your hero section. 60vh to 80vh is standard. */
-  height: 70vh; 
+  /* Enforces the 16:9 aspect ratio (3840/2160 = 1.77) */
+  aspect-ratio: 16 / 9; 
+  
+  /* Fallback for older browsers: max-height prevents it from becoming too tall on desktops */
+  max-height: 80vh; 
+  
   position: relative;
   overflow: hidden;
-  /* Add a tiny bottom margin so content doesn't crash into it */
-  margin-bottom: 20px; 
+  margin-bottom: 20px;
+  background-color: #f6efe4;
 }
 
-.mySwiper {
-  width: 100%;
-  height: 100%;
-}
-
-.slide {
+.mySwiper, .slide, .imageWrapper {
   width: 100%;
   height: 100%;
 }
@@ -36,10 +35,10 @@
 .imageWrapper img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* ESSENTIAL: Ensures image covers space without stretching */
-  object-position: center; /* Keeps important part of photo centered */
+  /* 'cover' ensures that even if the screen isn't exactly 16:9, the image stays sharp */
+  object-fit: cover; 
+  object-position: center;
 }
-
 /* --- CUSTOM SWIPER NAVIGATION STYLES (MATCHING YOUR GOLD) --- */
 
 /* Change default Swiper arrow color */

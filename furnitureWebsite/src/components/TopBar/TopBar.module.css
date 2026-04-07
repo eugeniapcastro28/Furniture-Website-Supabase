@@ -7,7 +7,7 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  background-color: #ffffff !important;
+  background-color: transparent !important;
   animation: entranceFade 0.4s ease-out forwards;
 }
 

@@ -1,7 +1,18 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import ViteImageOptimize from 'vite-plugin-image-optimize' // No curly braces!
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    ViteImageOptimize({
+      // Configuration for your 4K images
+      webp: {
+        quality: 80,
+      },
+      png: {
+        quality: 80,
+      }
+    }),
+  ],
 })
