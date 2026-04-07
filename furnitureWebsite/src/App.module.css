@@ -1,4 +1,3 @@
- 
 .mainContent {
   flex: 1;
   padding: 1px; 
@@ -7,14 +6,27 @@
   box-shadow: 0 0 20px rgba(195, 161, 111, 0.277);
   border: 1px solid #ffdf9f68;
   
-  margin: 10px;
-  height: calc(100vh - 25px); 
+  margin: 5.5px; /* Changed to 10px for cleaner math, or keep at 7px */
+  height: calc(100vh - 14px);
   overflow-y: auto; 
   
   display: flex;
   flex-direction: column;
   box-sizing: border-box; 
   position: relative;
+}
+
+/* --- MOBILE OVERRIDE --- */
+@media (max-width: 1050px) {
+  .mainContent {
+    margin: 0;            
+    border-radius: 0;    
+    border: none;      
+    box-shadow: none;   
+    height: auto;      
+    min-height: 100vh;
+    overflow-y: visible; 
+  }
 }
 
 .mainContent::-webkit-scrollbar {
@@ -31,7 +43,7 @@
 }
 
 .loaderLogo {
-  width: 350px; /* Adjust size as needed */
+  width: 350px; 
   height: auto;
   animation: pulse 2s infinite ease-in-out;
 }

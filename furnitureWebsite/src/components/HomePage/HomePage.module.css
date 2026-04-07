@@ -1,0 +1,100 @@
+.homeContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.heroSlider {
+  width: 100%;
+  /* Define the height of your hero section. 60vh to 80vh is standard. */
+  height: 70vh; 
+  position: relative;
+  overflow: hidden;
+  /* Add a tiny bottom margin so content doesn't crash into it */
+  margin-bottom: 20px; 
+}
+
+.mySwiper {
+  width: 100%;
+  height: 100%;
+}
+
+.slide {
+  width: 100%;
+  height: 100%;
+}
+
+.imageWrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f6efe4; /* Use your light gold/cream as placeholder */
+}
+
+.imageWrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* ESSENTIAL: Ensures image covers space without stretching */
+  object-position: center; /* Keeps important part of photo centered */
+}
+
+/* --- CUSTOM SWIPER NAVIGATION STYLES (MATCHING YOUR GOLD) --- */
+
+/* Change default Swiper arrow color */
+.homeContainer :global(.swiper-button-next),
+.homeContainer :global(.swiper-button-prev) {
+  color: #c3a26f !important; /* Your brand gold */
+  background-color: rgba(255, 255, 255, 0.6); /* Translucent white background */
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+/* Hide default pseudo-element arrows */
+.homeContainer :global(.swiper-button-next::after),
+.homeContainer :global(.swiper-button-prev::after) {
+  display: none;
+}
+
+/* Style our React-Icons arrows */
+.swiperButtonNext,
+.swiperButtonPrev {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  z-index: 10;
+}
+
+.homeContainer :global(.swiper-button-next:hover),
+.homeContainer :global(.swiper-button-prev:hover) {
+  background-color: rgba(255, 255, 255, 1);
+  transform: scale(1.1);
+}
+
+/* --- CUSTOM PAGINATION DOTS (MATCHING YOUR GOLD) --- */
+.homeContainer :global(.swiper-pagination-bullet) {
+  background-color: #c3a26f !important; /* Inactive dots gold */
+  opacity: 0.5;
+}
+
+.homeContainer :global(.swiper-pagination-bullet-active) {
+  background-color: #c3a26f !important; /* Active dot solid gold */
+  opacity: 1;
+}
+
+/* --- FILLER CONTENT --- */
+.fillerContent {
+  padding: 40px 20px;
+  text-align: center;
+  background-color: #ffffff;
+}
+
+.fillerContent h2 {
+  color: #6b5027;
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
