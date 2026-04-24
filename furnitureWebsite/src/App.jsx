@@ -26,7 +26,7 @@ const App = () => {
   return (
     <main className={styles.mainContent}>
       <TopBar />
-      <HomePage />
+      {/* <HomePage /> */}
     </main>
   )
 }

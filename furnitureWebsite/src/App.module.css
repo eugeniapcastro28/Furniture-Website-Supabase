@@ -1,28 +1,25 @@
 .mainContent {
   flex: 1;
+  /* Removed background, border, shadow, and radius to kill the "container" look */
   padding: 1px; 
-  background-color: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 0 20px rgba(195, 161, 111, 0.277);
-  border: 1px solid #ffdf9f68;
   
-  margin: 5.5px; /* Changed to 10px for cleaner math, or keep at 7px */
-  height: calc(100vh - 14px);
-  overflow-y: auto; 
+  /* Reset margins so it touches the edges */
+  margin: 0;
   
+  /* Keep layout properties */
   display: flex;
   flex-direction: column;
   box-sizing: border-box; 
   position: relative;
+
+  /* If you want it to scroll independently but look seamless: */
+  height: 100vh;
+  overflow-y: auto; 
 }
 
-/* --- MOBILE OVERRIDE --- */
+/* Simplified Mobile Override */
 @media (max-width: 1050px) {
   .mainContent {
-    margin: 0;            
-    border-radius: 0;    
-    border: none;      
-    box-shadow: none;   
     height: auto;      
     min-height: 100vh;
     overflow-y: visible; 
@@ -33,6 +30,7 @@
   display: none; 
 }
 
+/* Loading styles remain the same as they are full-screen anyway */
 .loadingContainer {
   height: 100vh;
   width: 100vw;

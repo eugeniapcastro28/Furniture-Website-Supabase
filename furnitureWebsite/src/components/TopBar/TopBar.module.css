@@ -1,8 +1,9 @@
 .topBarContainer {
   display: flex;
-  justify-content: space-between;
+  justify-content: center; /* Groups everything in the middle */
+  gap: 250px;              /* Sets exactly 100px between the logo and the nav */
   align-items: center;
-  padding: 0;
+  padding: 0 70px;
   height: 84px;
   position: sticky;
   top: 0;
@@ -32,7 +33,7 @@
   background-color: transparent;
 }
 
-.logo::before {
+/* .logo::before {
   content: "";
   position: absolute;
   top: 0;
@@ -43,7 +44,7 @@
   z-index: -1;
   border-bottom-right-radius: 90px;
   border-left: none;
-}
+} */
 
 .logo img {
   height: 62px;
@@ -64,7 +65,7 @@
 
 .navLinks {
   display: flex;
-  gap: 55px;
+  gap: 85px;
   align-items: center;
   padding-right: 40px;
 }
@@ -140,7 +141,7 @@
     width: 100%;
     background-color: #ffffff;
     padding: 20px 0;
-    gap: 10px;
+    gap: 20px;
     box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
     border-bottom: 2px solid #f0f0f0;
     z-index: 999;
