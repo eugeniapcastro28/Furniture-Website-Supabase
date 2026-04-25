@@ -1,14 +1,14 @@
+ 
 .topBarContainer {
   display: flex;
-  justify-content: center; /* Groups everything in the middle */
-  gap: 250px;              /* Sets exactly 100px between the logo and the nav */
+  justify-content: space-between;
   align-items: center;
-  padding: 0 70px;
+  flex-wrap: nowrap;
+  padding: 0 20px;
   height: 84px;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background-color: transparent !important;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
   animation: entranceFade 0.4s ease-out forwards;
 }
 
@@ -32,8 +32,8 @@
   position: relative;
   background-color: transparent;
 }
-
-/* .logo::before {
+/* 
+.logo::before {
   content: "";
   position: absolute;
   top: 0;
@@ -65,7 +65,7 @@
 
 .navLinks {
   display: flex;
-  gap: 85px;
+  gap: 55px;
   align-items: center;
   padding-right: 40px;
 }
@@ -113,54 +113,62 @@
 
 @media (max-width: 1050px) {
   .topBarContainer {
-    height: 70px;
-    padding: 0 15px;
-    overflow: visible; 
+    height: auto;
+    padding: 0 0px;
+    min-height: 64px;
+    overflow: visible;
+    justify-content: flex-start;
+  }
+
+  .logo {
+    gap: 12px;
+    flex: 1 1 auto;
+    min-width: 0;
+    padding-left: 0;
   }
 
   .logoName {
     font-size: 0.9rem;
     white-space: normal;
-    max-width: 250px;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .logo img {
     height: 50px;
   }
 
-  .logo::before {
-    display: none;
-  }
-
   .navLinks {
-    display: none;  
+    display: none;
     flex-direction: column;
     position: absolute;
-    top: 70px;  
+    top: 100%;
     left: 0;
+    right: 0;
     width: 100%;
     background-color: #ffffff;
-    padding: 20px 0;
-    gap: 20px;
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-    border-bottom: 2px solid #f0f0f0;
+    padding: 12px 0;
+    gap: 10px;
+    box-shadow: 0 10px 16px rgba(0, 0, 0, 0.12);
+    border-bottom: 1px solid #e8e8e8;
     z-index: 999;
   }
 
   .navLinks.mobileOpen {
     display: flex !important;
-    animation: slideDown 0.3s ease forwards;
+    animation: slideDown 0.25s ease forwards;
   }
 
   .navLinks a {
     width: 100%;
     text-align: center;
-    padding: 15px 0;
-    font-size: 1rem;
+    padding: 14px 0;
+    font-size: 0.98rem;
   }
 
   .navLinks a::after {
-    display: none;  
+    display: none;
   }
 
   .menuIcon {
@@ -170,6 +178,12 @@
     font-size: 28px;
     cursor: pointer;
     color: #6b5027;
+    padding: 10px;
+    margin-left: 16px;
+  }
+
+  .logo {
+    order: 1;
   }
 }
 
