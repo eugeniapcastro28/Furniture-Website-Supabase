@@ -1,99 +1,192 @@
 .homeContainer {
   width: 100%;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  padding: 60px 20px;
+  box-sizing: border-box;
+  background-color: #fff;
 }
 
-.heroSlider {
+.heroSection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1300px;
   width: 100%;
-  /* Enforces the 16:9 aspect ratio (3840/2160 = 1.77) */
-  aspect-ratio: 16 / 9; 
-  
-  /* Fallback for older browsers: max-height prevents it from becoming too tall on desktops */
-  max-height: 80vh; 
-  
-  position: relative;
-  overflow: hidden;
+  gap: 40px;
+}
+
+/* ── LEFT TEXT ─────────────────────────────── */
+.heroTextContent {
+  flex: 1;
+  min-width: 280px;
+}
+
+.heroTitle {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  line-height: 1.1;
   margin-bottom: 20px;
-  background-color: #f6efe4;
 }
 
-.mySwiper, .slide, .imageWrapper {
-  width: 100%;
-  height: 100%;
+.heroSubtitle {
+  font-size: 1.2rem;
+  color: #666;
+  line-height: 1.6;
 }
 
-.imageWrapper {
-  width: 100%;
-  height: 100%;
+/* ── CAROUSEL WRAPPER ──────────────────────── */
+.heroCarouselWrapper {
+  flex: 1.5;
   display: flex;
-  justify-content: center;
+  flex-direction: row;
   align-items: center;
-  background-color: #f6efe4; /* Use your light gold/cream as placeholder */
+  overflow: visible;
 }
 
-.imageWrapper img {
+/* ── MAIN BOX ──────────────────────────────── */
+.mainCarouselBox {
+  width: 520px;
+  height: 320px;
+  flex-shrink: 0;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid #e0d8cc;
+  background: #f7f4ef;
+  position: relative;
+  z-index: 3;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  /* GPU-accelerate the box itself */
+  will-change: transform;
+}
+
+/* Main image — full image, no crop */
+.mainImage {
   width: 100%;
   height: 100%;
-  /* 'cover' ensures that even if the screen isn't exactly 16:9, the image stays sharp */
-  object-fit: cover; 
-  object-position: center;
+  object-fit: contain;
+  display: block;
+  padding: 12px;
+  box-sizing: border-box;
 }
-/* --- CUSTOM SWIPER NAVIGATION STYLES (MATCHING YOUR GOLD) --- */
 
-/* Change default Swiper arrow color */
-.homeContainer :global(.swiper-button-next),
-.homeContainer :global(.swiper-button-prev) {
-  color: #c3a26f !important; /* Your brand gold */
-  background-color: rgba(255, 255, 255, 0.6); /* Translucent white background */
-  width: 50px;
-  height: 50px;
+/* ── CUSTOM ARROWS ─────────────────────────── */
+.arrowBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.88);
+  border: none;
   border-radius: 50%;
-  transition: all 0.3s ease;
-}
-
-/* Hide default pseudo-element arrows */
-.homeContainer :global(.swiper-button-next::after),
-.homeContainer :global(.swiper-button-prev::after) {
-  display: none;
-}
-
-/* Style our React-Icons arrows */
-.swiperButtonNext,
-.swiperButtonPrev {
+  width: 38px;
+  height: 38px;
+  font-size: 28px;
+  line-height: 1;
+  color: #8b6c3e;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  transition: background 0.2s, transform 0.15s;
+}
+.arrowBtn:hover {
+  background: #fff;
+  transform: translateY(-50%) scale(1.1);
+}
+.arrowLeft  { left: 10px; }
+.arrowRight { right: 10px; }
+
+/* Hide Swiper's own arrow icons since we use custom ones */
+:global(.swiper-button-next),
+:global(.swiper-button-prev) {
+  display: none !important;
+}
+
+/* ── DOTS ──────────────────────────────────── */
+.dots {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 7px;
   z-index: 10;
 }
-
-.homeContainer :global(.swiper-button-next:hover),
-.homeContainer :global(.swiper-button-prev:hover) {
-  background-color: rgba(255, 255, 255, 1);
-  transform: scale(1.1);
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
+.dotActive {
+  background: #c3a26f;
+  transform: scale(1.35);
 }
 
-/* --- CUSTOM PAGINATION DOTS (MATCHING YOUR GOLD) --- */
-.homeContainer :global(.swiper-pagination-bullet) {
-  background-color: #c3a26f !important; /* Inactive dots gold */
-  opacity: 0.5;
+/* ── SIDE BOX 1 ────────────────────────────── */
+.sideBoxSmall {
+  width: 150px;
+  height: 225px;
+  flex-shrink: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #e0d8cc;
+  background: #f7f4ef;
+  margin-left: -28px;
+  z-index: 2;
+  box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.sideBoxSmall:hover { transform: translateX(5px); }
+
+/* ── SIDE BOX 2 ────────────────────────────── */
+.sideBoxSmaller {
+  width: 82px;
+  height: 150px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e0d8cc;
+  background: #f7f4ef;
+  margin-left: -18px;
+  z-index: 1;
+  box-shadow: 4px 4px 16px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.sideBoxSmaller:hover { transform: translateX(5px); }
+
+/* Side images — also full, no crop */
+.sideImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  padding: 6px;
+  box-sizing: border-box;
 }
 
-.homeContainer :global(.swiper-pagination-bullet-active) {
-  background-color: #c3a26f !important; /* Active dot solid gold */
-  opacity: 1;
+/* ── RESPONSIVE ────────────────────────────── */
+@media (max-width: 1100px) {
+  .mainCarouselBox { width: 420px; height: 270px; }
+  .sideBoxSmall    { width: 125px; height: 185px; }
+  .sideBoxSmaller  { width: 68px;  height: 122px; }
 }
 
-/* --- FILLER CONTENT --- */
-.fillerContent {
-  padding: 40px 20px;
-  text-align: center;
-  background-color: #ffffff;
+@media (max-width: 900px) {
+  .heroSection         { flex-direction: column; text-align: center; }
+  .heroCarouselWrapper { justify-content: center; }
+  .mainCarouselBox     { width: 380px; height: 245px; }
 }
 
-.fillerContent h2 {
-  color: #6b5027;
-  font-size: 2rem;
-  margin-bottom: 10px;
+@media (max-width: 600px) {
+  .sideBoxSmall, .sideBoxSmaller { display: none; }
+  .mainCarouselBox { width: 100%; height: 230px; }
+  .heroTitle       { font-size: 2.2rem; }
 }

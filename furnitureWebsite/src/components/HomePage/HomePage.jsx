@@ -1,72 +1,89 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Pagination, Navigation } from 'swiper/modules';
-import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi';
+import { Autoplay, Navigation } from 'swiper/modules';
 
-// Import Swiper styles
 import 'swiper/css';
-import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
 import styles from './HomePage.module.css';
 
-// Dynamically import your images from assets
 import img1 from '../../assets/1.png';
 import img2 from '../../assets/2.png';
 import img3 from '../../assets/3.png';
-import img4 from '../../assets/4.png';
-import img5 from '../../assets/5.png';
+
+const heroImages = [img1, img2, img3];
 
 const HomePage = () => {
-  const heroImages = [img1, img2, img3, img4, img5];
+  const [activeIndex, setActiveIndex] = useState(0);
+  const swiperRef = useRef(null);
+
+  const getImg = (offset) =>
+    heroImages[(activeIndex + offset + heroImages.length) % heroImages.length];
 
   return (
     <div className={styles.homeContainer}>
-      {/* --- HERO SLIDER SECTION --- */}
-      <section className={styles.heroSlider}>
-        <Swiper
-          spaceBetween={0} // No gap between slides
-          centeredSlides={true}
-          slidesPerView={1}
-          loop={true} // Infinite loop
-          speed={1000} // Smooth transition speed (1 second)
-          autoplay={{
-            delay: 5000, // Stay on each slide for 5 seconds
-            disableOnInteraction: false, // Continue playing after user interaction
-          }}
-          pagination={{
-            clickable: true,
-            dynamicBullets: true, // Cool effect where active dot is bigger
-          }}
-          navigation={{
-            nextEl: `.${styles.swiperButtonNext}`, // Custom next arrow class
-            prevEl: `.${styles.swiperButtonPrev}`, // Custom prev arrow class
-          }}
-          modules={[Autoplay, Pagination, Navigation]}
-          className={styles.mySwiper}
-        >
-          {heroImages.map((image, index) => (
-            <SwiperSlide key={index} className={styles.slide}>
-              <div className={styles.imageWrapper}>
-                <img src={image} alt={`Bamboo Furniture Showcase ${index + 1}`} loading="lazy" />
-              </div>
-            </SwiperSlide>
-          ))}
-          
-          {/* Custom Navigation Arrows (Matched to your gold color) */}
-          <div className={`${styles.swiperButtonPrev} swiper-button-prev`}>
-            <HiOutlineChevronLeft />
-          </div>
-          <div className={`${styles.swiperButtonNext} swiper-button-next`}>
-            <HiOutlineChevronRight />
-          </div>
-        </Swiper>
-      </section>
+      <section className={styles.heroSection}>
 
-      {/* --- Rest of your HomePage content (Grid, Features, etc.) --- */}
-      <section className={styles.fillerContent}>
-        <h2>Your Premium Bamboo Journey Starts Here</h2>
-        <p>This is where your product category grid or featured items will go...</p>
+        {/* LEFT: TEXT */}
+        <div className={styles.heroTextContent}>
+          <h1 className={styles.heroTitle}>FURNITURE WEBSITE SAMPLE</h1>
+          <p className={styles.heroSubtitle}>
+            Sample Text Only Sample Text Only Sample Text Only Sample Text Only
+          </p>
+        </div>
+
+        {/* RIGHT: CASCADING BOXES */}
+        <div className={styles.heroCarouselWrapper}>
+
+          {/* MAIN SWIPER BOX */}
+          <div className={styles.mainCarouselBox}>
+            <Swiper
+              modules={[Autoplay, Navigation]}
+              loop={true}
+              speed={600}
+              autoplay={{ delay: 3500, disableOnInteraction: false }}
+              navigation={{
+                prevEl: `.${styles.arrowLeft}`,
+                nextEl: `.${styles.arrowRight}`,
+              }}
+              onSwiper={(swiper) => { swiperRef.current = swiper; }}
+              onRealIndexChange={(swiper) => setActiveIndex(swiper.realIndex)}
+              style={{ width: '100%', height: '100%' }}
+            >
+              {heroImages.map((img, i) => (
+                <SwiperSlide key={i}>
+                  <img src={img} alt={`Furniture ${i + 1}`} className={styles.mainImage} />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+
+            {/* Custom Arrows */}
+            <button className={`${styles.arrowBtn} ${styles.arrowLeft}`} aria-label="Previous">&#8249;</button>
+            <button className={`${styles.arrowBtn} ${styles.arrowRight}`} aria-label="Next">&#8250;</button>
+
+            {/* Dots */}
+            <div className={styles.dots}>
+              {heroImages.map((_, i) => (
+                <span
+                  key={i}
+                  className={`${styles.dot} ${i === activeIndex ? styles.dotActive : ''}`}
+                  onClick={() => swiperRef.current?.slideToLoop(i)}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* SIDE PREVIEW 1 */}
+          <div className={styles.sideBoxSmall} onClick={() => swiperRef.current?.slideNext()}>
+            <img src={getImg(1)} alt="Preview next" className={styles.sideImage} />
+          </div>
+
+          {/* SIDE PREVIEW 2 */}
+          <div className={styles.sideBoxSmaller} onClick={() => swiperRef.current?.slideNext()}>
+            <img src={getImg(2)} alt="Preview after" className={styles.sideImage} />
+          </div>
+
+        </div>
       </section>
     </div>
   );
