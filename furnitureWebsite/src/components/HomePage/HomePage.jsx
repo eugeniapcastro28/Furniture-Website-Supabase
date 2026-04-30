@@ -17,9 +17,6 @@ const HomePage = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const swiperRef = useRef(null);
 
-  const getImg = (offset) =>
-    heroImages[(activeIndex + offset + heroImages.length) % heroImages.length];
-
   return (
     <div className={styles.homeContainer}>
       <section className={styles.heroSection}>
@@ -32,10 +29,8 @@ const HomePage = () => {
           </p>
         </div>
 
-        {/* RIGHT: CASCADING BOXES */}
+        {/* RIGHT: CAROUSEL */}
         <div className={styles.heroCarouselWrapper}>
-
-          {/* MAIN SWIPER BOX */}
           <div className={styles.mainCarouselBox}>
             <Swiper
               modules={[Autoplay, Navigation]}
@@ -55,12 +50,8 @@ const HomePage = () => {
                   <img src={img} alt={`Furniture ${i + 1}`} className={styles.mainImage} />
                 </SwiperSlide>
               ))}
-            </Swiper>
-
-            {/* Custom Arrows */}
-            <button className={`${styles.arrowBtn} ${styles.arrowLeft}`} aria-label="Previous">&#8249;</button>
-            <button className={`${styles.arrowBtn} ${styles.arrowRight}`} aria-label="Next">&#8250;</button>
-
+            </Swiper> 
+            
             {/* Dots */}
             <div className={styles.dots}>
               {heroImages.map((_, i) => (
@@ -72,18 +63,8 @@ const HomePage = () => {
               ))}
             </div>
           </div>
-
-          {/* SIDE PREVIEW 1 */}
-          <div className={styles.sideBoxSmall} onClick={() => swiperRef.current?.slideNext()}>
-            <img src={getImg(1)} alt="Preview next" className={styles.sideImage} />
-          </div>
-
-          {/* SIDE PREVIEW 2 */}
-          <div className={styles.sideBoxSmaller} onClick={() => swiperRef.current?.slideNext()}>
-            <img src={getImg(2)} alt="Preview after" className={styles.sideImage} />
-          </div>
-
         </div>
+
       </section>
     </div>
   );

@@ -40,153 +40,67 @@
 .heroCarouselWrapper {
   flex: 1.5;
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  overflow: visible;
+  justify-content: flex-end; /* Keeps it to the right on desktop */
 }
 
 /* ── MAIN BOX ──────────────────────────────── */
 .mainCarouselBox {
-  width: 520px;
-  height: 320px;
-  flex-shrink: 0;
+  width: 100%;
+  max-width: 650px; /* Slightly increased now that side boxes are gone */
+  height: 400px;    /* Adjusted for a better aspect ratio */
   border-radius: 20px;
   overflow: hidden;
-  border: 1px solid #e0d8cc;
-  background: #f7f4ef;
   position: relative;
-  z-index: 3;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-  /* GPU-accelerate the box itself */
-  will-change: transform;
+  background: transparent;
 }
 
-/* Main image — full image, no crop */
 .mainImage {
   width: 100%;
   height: 100%;
   object-fit: contain;
   display: block;
-  padding: 12px;
-  box-sizing: border-box;
-}
-
-/* ── CUSTOM ARROWS ─────────────────────────── */
-.arrowBtn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.88);
-  border: none;
-  border-radius: 50%;
-  width: 38px;
-  height: 38px;
-  font-size: 28px;
-  line-height: 1;
-  color: #8b6c3e;
-  cursor: pointer;
-  z-index: 10;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s, transform 0.15s;
-}
-.arrowBtn:hover {
-  background: #fff;
-  transform: translateY(-50%) scale(1.1);
-}
-.arrowLeft  { left: 10px; }
-.arrowRight { right: 10px; }
-
-/* Hide Swiper's own arrow icons since we use custom ones */
-:global(.swiper-button-next),
-:global(.swiper-button-prev) {
-  display: none !important;
-}
+} 
 
 /* ── DOTS ──────────────────────────────────── */
 .dots {
   position: absolute;
-  bottom: 10px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 7px;
+  gap: 8px;
   z-index: 10;
 }
+
 .dot {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.2);
   cursor: pointer;
-  transition: background 0.3s, transform 0.3s;
 }
+
 .dotActive {
   background: #c3a26f;
-  transform: scale(1.35);
-}
-
-/* ── SIDE BOX 1 ────────────────────────────── */
-.sideBoxSmall {
-  width: 150px;
-  height: 225px;
-  flex-shrink: 0;
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid #e0d8cc;
-  background: #f7f4ef;
-  margin-left: -28px;
-  z-index: 2;
-  box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-.sideBoxSmall:hover { transform: translateX(5px); }
-
-/* ── SIDE BOX 2 ────────────────────────────── */
-.sideBoxSmaller {
-  width: 82px;
-  height: 150px;
-  flex-shrink: 0;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid #e0d8cc;
-  background: #f7f4ef;
-  margin-left: -18px;
-  z-index: 1;
-  box-shadow: 4px 4px 16px rgba(0, 0, 0, 0.08);
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-.sideBoxSmaller:hover { transform: translateX(5px); }
-
-/* Side images — also full, no crop */
-.sideImage {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-  padding: 6px;
-  box-sizing: border-box;
+  transform: scale(1.2);
 }
 
 /* ── RESPONSIVE ────────────────────────────── */
-@media (max-width: 1100px) {
-  .mainCarouselBox { width: 420px; height: 270px; }
-  .sideBoxSmall    { width: 125px; height: 185px; }
-  .sideBoxSmaller  { width: 68px;  height: 122px; }
-}
-
 @media (max-width: 900px) {
-  .heroSection         { flex-direction: column; text-align: center; }
-  .heroCarouselWrapper { justify-content: center; }
-  .mainCarouselBox     { width: 380px; height: 245px; }
+  .heroSection { 
+    flex-direction: column; 
+    text-align: center; 
+  }
+  .heroCarouselWrapper { 
+    justify-content: center; 
+    width: 100%;
+  }
+  .mainCarouselBox { 
+    height: 300px; 
+  }
 }
 
 @media (max-width: 600px) {
-  .sideBoxSmall, .sideBoxSmaller { display: none; }
-  .mainCarouselBox { width: 100%; height: 230px; }
-  .heroTitle       { font-size: 2.2rem; }
+  .heroTitle { font-size: 2.2rem; }
+  .mainCarouselBox { height: 250px; }
 }
