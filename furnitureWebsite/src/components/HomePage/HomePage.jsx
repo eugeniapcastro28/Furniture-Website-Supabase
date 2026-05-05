@@ -11,50 +11,60 @@ import img1 from '../../assets/1.png';
 import img2 from '../../assets/2.png';
 import img3 from '../../assets/3.png';
 
-const heroImages = [img1, img2, img3];
+const slidesData = [
+  { img: img1, title: "Rattan Sala Set", sub: "Handcrafted comfort for your living room." },
+  { img: img2, title: "Wooden Sala Set", sub: "Premium mahogany finish with durable cushions." },
+  { img: img3, title: "Wooden Cleopatra", sub: "Elegant vintage design for luxury lounging." },
+];
 
 const HomePage = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const swiperRef = useRef(null);
 
+  // Helper to wrap the first letter of every word
+  const formatTitle = (text) => {
+    return text.split(' ').map((word, index) => (
+      <span key={index}>
+        <span className={styles.firstLetter}>{word[0]}</span>
+        {word.slice(1)}{' '}
+      </span>
+    ));
+  };
+
   return (
     <div className={styles.homeContainer}>
       <section className={styles.heroSection}>
-
-        {/* LEFT: TEXT */}
-        <div className={styles.heroTextContent}>
-          <h1 className={styles.heroTitle}>FURNITURE WEBSITE SAMPLE</h1>
-          <p className={styles.heroSubtitle}>
-            Sample Text Only Sample Text Only Sample Text Only Sample Text Only
-          </p>
-        </div>
-
-        {/* RIGHT: CAROUSEL */}
+        
         <div className={styles.heroCarouselWrapper}>
+          {/* TEXT CONTENT - Now inside the wrapper to overlap */}
+          <div className={styles.heroTextOverlay}>
+            <h1 className={styles.heroTitle}>
+              {formatTitle(slidesData[activeIndex].title)}
+            </h1>
+            <p className={styles.heroSubtitle}>
+              {slidesData[activeIndex].sub}
+            </p>
+          </div>
+
           <div className={styles.mainCarouselBox}>
             <Swiper
               modules={[Autoplay, Navigation]}
               loop={true}
               speed={600}
               autoplay={{ delay: 3500, disableOnInteraction: false }}
-              navigation={{
-                prevEl: `.${styles.arrowLeft}`,
-                nextEl: `.${styles.arrowRight}`,
-              }}
               onSwiper={(swiper) => { swiperRef.current = swiper; }}
               onRealIndexChange={(swiper) => setActiveIndex(swiper.realIndex)}
               style={{ width: '100%', height: '100%' }}
             >
-              {heroImages.map((img, i) => (
+              {slidesData.map((slide, i) => (
                 <SwiperSlide key={i}>
-                  <img src={img} alt={`Furniture ${i + 1}`} className={styles.mainImage} />
+                  <img src={slide.img} alt={slide.title} className={styles.mainImage} />
                 </SwiperSlide>
               ))}
             </Swiper> 
             
-            {/* Dots */}
             <div className={styles.dots}>
-              {heroImages.map((_, i) => (
+              {slidesData.map((_, i) => (
                 <span
                   key={i}
                   className={`${styles.dot} ${i === activeIndex ? styles.dotActive : ''}`}

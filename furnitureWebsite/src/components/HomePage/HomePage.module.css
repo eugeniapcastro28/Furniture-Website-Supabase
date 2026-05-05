@@ -23,17 +23,31 @@
 }
 
 .heroTitle {
-  font-size: 3.5rem;
-  font-weight: 800;
+  font-family: 'Cinzel', serif; /* Or your preferred font */
+  text-transform: capitalize; /* Ensures the first letter of every word is a capital */
+  font-variant: small-caps;   /* Turns lowercase letters into smaller capital letters */
+  font-size: 4rem;
+  font-weight: 400; /* Use 400 or 500 for that elegant, thin-stroke look */
+  letter-spacing: 2px; /* Adds that premium 'breathable' feel */
+  text-transform: uppercase;
   color: #1a1a1a;
   line-height: 1.1;
   margin-bottom: 20px;
 }
 
 .heroSubtitle {
-  font-size: 1.2rem;
+  /* Keeping the subtitle clean but matching the vibe */
+  font-family: sans-serif; 
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
   color: #666;
   line-height: 1.6;
+}
+
+.firstLetter {
+  font-size: 1.5em; /* This makes it 50% larger than the surrounding text */
+  vertical-align: middle; /* Optional: keeps the baseline aligned */
+  margin-right: -2px; /* Optional: tightens the gap created by the larger size */
 }
 
 /* ── CAROUSEL WRAPPER ──────────────────────── */
