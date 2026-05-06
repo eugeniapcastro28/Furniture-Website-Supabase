@@ -13,7 +13,7 @@
   position: relative;
 
   /* If you want it to scroll independently but look seamless: */
-  height: 100vh;
+  min-height: 100vh;
   overflow-y: auto; 
 }
 

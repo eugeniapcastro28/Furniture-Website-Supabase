@@ -5,7 +5,7 @@
   align-items: center;
   flex-wrap: nowrap;
   padding: 0 20px;
-  height: 84px;
+  height: 68px;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
@@ -47,13 +47,13 @@
 } */
 
 .logo img {
-  height: 62px;
+  height: 54px;
   width: auto;
   z-index: 1;
 }
 
 .logoName {
-  font-size: 1rem;
+  font-size: 0.8rem;
   font-weight: 700;
   color: #6b5027;
   text-transform: uppercase;
@@ -75,7 +75,7 @@
   color: #333;
   font-weight: 500;
   transition: all 0.3s ease;
-  font-size: 16px;
+  font-size: 12px;
   position: relative;
   padding: 5px 0;
 }
