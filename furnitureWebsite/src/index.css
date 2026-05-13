@@ -12,5 +12,24 @@ html, body, #root {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* This prevents the whole page from scrolling so only the containers do */
+  overflow-x: hidden; /* This prevents the whole page from scrolling so only the containers do */
 }
+
+/* Slim aesthetic scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c3a26f; /* Matches your gold dot color */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8845a;
+}
+

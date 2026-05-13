@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; // Added useEffect
+import React, { useState, useEffect, useRef } from 'react'; // Added useEffect
 import styles from './TopBar.module.css';
 import logo from '../../assets/No Name.png';
 import mobileLogo from '../../assets/LOGO.png'; // Import your mobile logo
@@ -7,7 +7,8 @@ import { HiMenuAlt3 } from "react-icons/hi";
 const TopBar = () => {
   const [activeLink, setActiveLink] = useState('#home');
   const [isMobile, setIsMobile] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // NEW STATE
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef(null);
 
   const handleLinkClick = (link) => {
     setActiveLink(link);
@@ -28,8 +29,22 @@ const TopBar = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    if (isMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isMenuOpen]);
+
   return (
-    <header className={styles.topBarContainer}>
+    <header className={styles.topBarContainer} ref={menuRef}>
       <div className={styles.logo}>
         <img src={isMobile ? mobileLogo : logo} alt="Company Logo" />
         <span className={styles.logoName}>E. Panganiban Bamboo & Furniture Shop</span>

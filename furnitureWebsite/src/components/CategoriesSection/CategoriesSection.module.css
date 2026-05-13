@@ -1,0 +1,87 @@
+.categoriesContainer {
+  width: 100%;
+  background-color: #fff;
+  padding: 80px 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sectionTitle {
+  font-family: 'Cinzel', serif;
+  font-size: 2.2rem;
+  font-weight: 400;
+  color: #1a1a1a;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.sectionSubtitle {
+  font-size: 1rem;
+  color: #888;
+  margin-bottom: 50px;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.categoriesGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  max-width: 1100px;
+  width: 100%;
+}
+
+.categoryCard {
+  background-color: #F6F5F1;
+  border-radius: 16px;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.categoryCard:hover {
+  border-color: #c3a26f;
+  background-color: #fdf6ec;
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(195, 162, 111, 0.15);
+}
+
+.categoryIcon {
+  font-size: 2.8rem;
+}
+
+.categoryLabel {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  color: #6b5027;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* ── RESPONSIVE ─────────────────────────────── */
+@media (max-width: 900px) {
+  .categoriesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .sectionTitle {
+    font-size: 1.6rem;
+  }
+  .categoriesGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation } from 'swiper/modules';
 
@@ -20,6 +20,15 @@ const slidesData = [
 const HomePage = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const swiperRef = useRef(null);
+  const [modalImg, setModalImg] = useState(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setModalImg(null);
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Helper to wrap the first letter of every word
   const formatTitle = (text) => {
@@ -58,7 +67,8 @@ const HomePage = () => {
             >
               {slidesData.map((slide, i) => (
                 <SwiperSlide key={i}>
-                  <img src={slide.img} alt={slide.title} className={styles.mainImage} />
+                  <img src={slide.img} alt={slide.title} className={styles.mainImage} 
+                  onClick={() => setModalImg(slide)} />
                 </SwiperSlide>
               ))}
             </Swiper> 
@@ -76,6 +86,17 @@ const HomePage = () => {
         </div>
 
       </section>
+
+      {modalImg && (
+        <div className={styles.modalOverlay} onClick={() => setModalImg(null)}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <button className={styles.modalClose} onClick={() => setModalImg(null)}>✕</button>
+            <img src={modalImg.img} alt={modalImg.title} className={styles.modalImage} />
+            <p className={styles.modalTitle}>{modalImg.title}</p>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

@@ -3,6 +3,7 @@ import styles from './App.module.css';
 import logo from './assets/LOGO.png';
 import HomePage from './components/HomePage/HomePage';
 import TopBar from './components/TopBar/TopBar';
+import CategoriesSection from './components/CategoriesSection/CategoriesSection';
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -27,6 +28,7 @@ const App = () => {
     <main className={styles.mainContent}>
       <TopBar />
       <HomePage />
+      <CategoriesSection />
     </main>
   )
 }
