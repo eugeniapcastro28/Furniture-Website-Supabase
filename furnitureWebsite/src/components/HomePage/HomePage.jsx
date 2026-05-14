@@ -7,9 +7,9 @@ import 'swiper/css/navigation';
 
 import styles from './HomePage.module.css';
 
-import img1 from '../../assets/1.png';
-import img2 from '../../assets/2.png';
-import img3 from '../../assets/3.png';
+import img1 from '../../assets/1.webp';
+import img2 from '../../assets/2.webp';
+import img3 from '../../assets/3.webp';
 
 const slidesData = [
   { img: img1, title: "Rattan Sala Set", sub: "Handcrafted comfort for your living room." },
@@ -66,11 +66,11 @@ const HomePage = () => {
               style={{ width: '100%', height: '100%' }}
             >
               {slidesData.map((slide, i) => (
-                <SwiperSlide key={i}>
-                  <img src={slide.img} alt={slide.title} className={styles.mainImage} 
+              <SwiperSlide key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <img src={slide.img} loading="eager" alt={slide.title} className={styles.mainImage}
                   onClick={() => setModalImg(slide)} />
-                </SwiperSlide>
-              ))}
+              </SwiperSlide>
+            ))}
             </Swiper> 
             
             <div className={styles.dots}>

@@ -35,30 +35,57 @@
   width: 100%;
 }
 
+/* ── CARD ───────────────────────────────────── */
 .categoryCard {
-  background-color: #F6F5F1;
   border-radius: 16px;
-  padding: 40px 20px;
+  overflow: hidden;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  cursor: pointer;
-  transition: all 0.3s ease;
   border: 2px solid transparent;
+  transition: all 0.3s ease;
+  background-color: #F6F5F1;
 }
 
 .categoryCard:hover {
   border-color: #c3a26f;
-  background-color: #fdf6ec;
   transform: translateY(-4px);
-  box-shadow: 0 10px 30px rgba(195, 162, 111, 0.15);
+  box-shadow: 0 10px 30px rgba(195, 162, 111, 0.2);
 }
 
-.categoryIcon {
-  font-size: 2.8rem;
+/* ── IMAGE ──────────────────────────────────── */
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;   /* Square crop */
+  overflow: hidden;
 }
 
+.categoryImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.categoryCard:hover .categoryImage {
+  transform: scale(1.06);
+}
+
+/* Subtle warm overlay on hover */
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(195, 162, 111, 0);
+  transition: background 0.3s ease;
+}
+
+.categoryCard:hover .imageOverlay {
+  background: rgba(195, 162, 111, 0.12);
+}
+
+/* ── LABEL ──────────────────────────────────── */
 .categoryLabel {
   font-family: 'Cinzel', serif;
   font-size: 0.95rem;
@@ -67,6 +94,9 @@
   text-transform: uppercase;
   font-weight: 600;
   margin: 0;
+  padding: 16px;
+  text-align: center;
+  background-color: #F6F5F1;
 }
 
 /* ── RESPONSIVE ─────────────────────────────── */

@@ -23,16 +23,18 @@
 }
 
 .heroTitle {
-  font-family: 'Cinzel', serif; /* Or your preferred font */
-  text-transform: capitalize; /* Ensures the first letter of every word is a capital */
-  font-variant: small-caps;   /* Turns lowercase letters into smaller capital letters */
+  font-family: 'Cinzel', serif;
+  font-variant: small-caps;
   font-size: 4rem;
-  font-weight: 400; /* Use 400 or 500 for that elegant, thin-stroke look */
-  letter-spacing: 2px; /* Adds that premium 'breathable' feel */
+  font-weight: 400;
+  letter-spacing: 2px;
   text-transform: uppercase;
   color: #1a1a1a;
   line-height: 1.1;
   margin-bottom: 20px;
+  min-height: 180px;          /* ← Reserve space for up to 3 lines of title */
+  display: flex;
+  align-items: center;
 }
 
 .heroSubtitle {
@@ -54,36 +56,41 @@
 .heroCarouselWrapper {
   flex: 1.5;
   display: flex;
-  flex-direction: row; /* Default: Side by side */
-  align-items: center;
+  flex-direction: row;
+  align-items: center;        /* Change to flex-start so height isn't shared */
   justify-content: space-between;
   width: 100%;
   gap: 20px;
+  min-height: 400px;          /* ← Lock the wrapper height */
 }
 
 .heroTextOverlay {
   flex: 1;
   z-index: 2;
-  /* If you had position: absolute here, remove it for mobile flow */
+  min-height: 400px;          /* ← Same as carousel box */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;    /* Vertically center text within its fixed space */
 }
-
 /* ── MAIN BOX ──────────────────────────────── */
 .mainCarouselBox {
   width: 100%;
-  max-width: 650px; /* Slightly increased now that side boxes are gone */
-  height: 400px;    /* Adjusted for a better aspect ratio */
+  max-width: 650px;
+  height: 400px;              /* Already fixed ✅ */
   border-radius: 20px;
-  overflow-y: auto;
+  overflow: hidden;
   position: relative;
-  background: transparent;
+  background: #F6F5F1;
+  flex-shrink: 0;             /* ← Prevents Swiper box from shrinking */
 }
 
 .mainImage {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: contain;  /* Keep 'contain' so furniture isn't cropped */
   display: block;
-} 
+  cursor: zoom-in;
+}
 
 /* ── DOTS ──────────────────────────────────── */
 .dots {
