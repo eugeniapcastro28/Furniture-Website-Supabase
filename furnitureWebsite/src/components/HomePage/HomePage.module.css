@@ -1,102 +1,209 @@
-.homeContainer {
+/* ── HERO ──────────────────────────────────────── */
+.hero {
+  position: relative;
   width: 100%;
+  min-height: calc(100vh - 76px);
   display: flex;
-  justify-content: center;
-  padding: 60px 20px;
-  box-sizing: border-box;
-  background-color: #F6F5F1;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: #1a1510;
 }
 
-.heroSection {
+/* ── BACKGROUND ────────────────────────────────── */
+.heroBg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.heroBgSlide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.heroBgActive { opacity: 1; }
+
+.heroBgOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    rgba(20, 14, 8, 0.82) 0%,
+    rgba(20, 14, 8, 0.5) 50%,
+    rgba(20, 14, 8, 0.15) 100%
+  );
+}
+
+/* ── CONTENT ───────────────────────────────────── */
+.heroContent {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: space-between;
   max-width: 1300px;
   width: 100%;
-  gap: 40px;
+  margin: 0 auto;
+  padding: 64px 40px 80px;
+  flex: 1;
+  gap: 48px;
 }
 
-/* ── LEFT TEXT ─────────────────────────────── */
-.heroTextContent {
+/* ── LEFT ──────────────────────────────────────── */
+.heroLeft {
   flex: 1;
-  min-width: 280px;
+  max-width: 520px;
+  animation: fadeSlideUp 0.7s ease both;
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.heroEyebrow {
+  display: inline-block;
+  font-family: 'Cinzel', serif;
+  font-size: 0.68rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #c3a26f;
+  margin-bottom: 20px;
+  padding: 6px 14px;
+  border: 1px solid rgba(195, 162, 111, 0.4);
+  border-radius: 20px;
 }
 
 .heroTitle {
   font-family: 'Cinzel', serif;
-  font-variant: small-caps;
-  font-size: 3rem;
-  font-weight: 400;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: #1a1a1a;
+  font-size: clamp(2.4rem, 4vw, 4rem);
+  font-weight: 700;
+  color: #f5ede0;
   line-height: 1.1;
-  margin-bottom: 20px;
-  min-height: unset;          /* ← Reserve space for up to 3 lines of title */
+  margin: 0 0 20px;
+  letter-spacing: 1px;
+  animation: fadeSlideUp 0.7s 0.1s ease both;
+}
+
+.heroDesc {
+  font-size: 1rem;
+  color: rgba(245, 237, 224, 0.7);
+  line-height: 1.7;
+  margin-bottom: 28px;
+  max-width: 420px;
+  animation: fadeSlideUp 0.7s 0.2s ease both;
+}
+
+.heroMeta {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  gap: 0;
+  margin-bottom: 36px;
+  animation: fadeSlideUp 0.7s 0.3s ease both;
 }
 
-.heroSubtitle {
-  /* Keeping the subtitle clean but matching the vibe */
-  font-family: sans-serif; 
-  font-size: 1.1rem;
-  letter-spacing: 0.5px;
-  color: #666;
-  line-height: 1.6;
-}
-
-.firstLetter {
-  font-size: 1.5em; /* This makes it 50% larger than the surrounding text */
-  vertical-align: middle; /* Optional: keeps the baseline aligned */
-  margin-right: -2px; /* Optional: tightens the gap created by the larger size */
-}
-
-/* ── CAROUSEL WRAPPER ──────────────────────── */
-.heroCarouselWrapper {
-  flex: 1.5;
-  display: flex;
-  flex-direction: row;
-  align-items: center;        /* Change to flex-start so height isn't shared */
-  justify-content: space-between;
-  width: 100%;
-  gap: 20px;
-  min-height: clamp(250px, 45vw, 400px);          /* ← Lock the wrapper height */
-}
-
-.heroTextOverlay {
-  flex: 1;
-  z-index: 2;
-  min-height: clamp(250px, 45vw, 400px);         /* ← Same as carousel box */
+.metaItem {
   display: flex;
   flex-direction: column;
-  justify-content: center;    /* Vertically center text within its fixed space */
+  gap: 4px;
 }
-/* ── MAIN BOX ──────────────────────────────── */
-.mainCarouselBox {
+
+.metaLabel {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #c3a26f;
+}
+
+.metaValue {
+  font-size: 0.85rem;
+  color: rgba(245, 237, 224, 0.85);
+}
+
+.metaDivider {
+  width: 1px;
+  height: 40px;
+  background: rgba(195, 162, 111, 0.3);
+  margin: 0 24px;
+}
+
+.heroCta {
+  display: inline-block;
+  background-color: #c3a26f;
+  color: #1a1510;
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 14px 32px;
+  border-radius: 4px;
+  transition: background 0.25s ease, transform 0.2s ease;
+  animation: fadeSlideUp 0.7s 0.4s ease both;
+}
+
+.heroCta:hover {
+  background-color: #a8845a;
+  transform: translateY(-2px);
+}
+
+/* ── RIGHT ─────────────────────────────────────── */
+.heroRight {
+  flex: 1;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: fadeSlideRight 0.7s 0.15s ease both;
+}
+
+@keyframes fadeSlideRight {
+  from { opacity: 0; transform: translateX(28px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.carouselBox {
+  position: relative;
   width: 100%;
-  max-width: 650px;
-  height: clamp(250px, 45vw, 400px);              /* Already fixed ✅ */
+  aspect-ratio: 4 / 3;
   border-radius: 20px;
   overflow: hidden;
-  position: relative;
-  background: #F6F5F1;
-  flex-shrink: 0;             /* ← Prevents Swiper box from shrinking */
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
 }
 
-.mainImage {
+.slideImg {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Keep 'contain' so furniture isn't cropped */
-  object-position: center center;
-  display: block;
+  object-fit: cover;
   cursor: zoom-in;
+  display: block;
 }
 
-/* ── DOTS ──────────────────────────────────── */
+.tagBadge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 10;
+  background-color: #c3a26f;
+  color: #1a1510;
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 3px;
+}
+
 .dots {
   position: absolute;
-  bottom: 20px;
+  bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -105,75 +212,112 @@
 }
 
 .dot {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.35);
+  border: none;
   cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  padding: 0;
 }
 
 .dotActive {
   background: #c3a26f;
-  transform: scale(1.2);
+  transform: scale(1.3);
 }
 
-/* ── RESPONSIVE ────────────────────────────── */
-@media (max-width: 900px) {
-  .heroCarouselWrapper {
-    flex-direction: column; /* This stacks them vertically */
-    justify-content: center;
-    text-align: center;
-  }
-
-  .heroTextOverlay {
-    width: 100%;
-    margin-bottom: 20px; /* Space between title and image */
-    order: 1; /* Ensures text stays on top */
-  }
-
-  .mainCarouselBox {
-    width: 100%;
-    height: 350px;
-    order: 2; /* Ensures image stays on bottom */
-  }
+.thumbnails {
+  display: flex;
+  gap: 10px;
 }
 
-@media (max-width: 600px) {
-  .heroTitle {
-    font-size: clamp(1.8rem, 4vw, 4rem);
-  }
-  .mainCarouselBox {
-    height: 250px;
-  }
+.thumb {
+  flex: 1;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.25s ease, transform 0.2s ease;
+  padding: 0;
+  background: none;
 }
 
-/* ── MODAL ──────────────────────────────────── */
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.thumbActive {
+  border-color: #c3a26f;
+  transform: translateY(-3px);
+}
+
+/* ── SCROLL HINT ───────────────────────────────── */
+.scrollHint {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.5;
+}
+
+.scrollLine {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, #c3a26f, transparent);
+  animation: scrollPulse 1.8s infinite ease-in-out;
+}
+
+@keyframes scrollPulse {
+  0%, 100% { transform: scaleY(1); opacity: 0.5; }
+  50% { transform: scaleY(0.6); opacity: 1; }
+}
+
+.scrollLabel {
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #c3a26f;
+}
+
+/* ── MODAL ─────────────────────────────────────── */
 .modalOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
   animation: fadeIn 0.2s ease;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(6px);
 }
+
 .modalContent {
   position: relative;
   background: #F6F5F1;
   border-radius: 16px;
-  padding: 5px;
-  max-width: 800px;
-  width: 90%;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  padding: 8px;
+  max-width: 820px;
+  width: 92%;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
   animation: scaleIn 0.25s ease;
 }
 
 .modalImage {
   width: 100%;
   height: auto;
-  max-height: 70vh;
+  max-height: 72vh;
   object-fit: contain;
   border-radius: 10px;
   display: block;
@@ -182,8 +326,8 @@
 .modalTitle {
   font-family: 'Cinzel', serif;
   text-align: center;
-  margin-top: 14px;
-  font-size: 1.1rem;
+  margin: 14px 0 6px;
+  font-size: 1.05rem;
   color: #6b5027;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -200,23 +344,41 @@
   color: #888;
   transition: color 0.2s;
 }
+.modalClose:hover { color: #c3a26f; }
 
-.modalClose:hover {
-  color: #c3a26f;
-}
-
-/* ── MODAL ANIMATIONS ───────────────────────── */
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
 
 @keyframes scaleIn {
-  from { transform: scale(0.92); opacity: 0; }
-  to   { transform: scale(1);    opacity: 1; }
+  from { transform: scale(0.93); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
 }
 
-/* Make the image show a pointer cursor */
-.mainImage {
-  cursor: zoom-in;
+/* ── RESPONSIVE ────────────────────────────────── */
+@media (max-width: 960px) {
+  .heroContent {
+    flex-direction: column;
+    padding: 48px 24px 60px;
+    gap: 40px;
+  }
+
+  .heroLeft {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .heroDesc { max-width: 100%; margin: 0 auto 28px; }
+
+  .heroMeta { justify-content: center; }
+
+  .heroRight { max-width: 100%; }
+}
+
+@media (max-width: 600px) {
+  .hero { min-height: 100svh; }
+  .heroTitle { font-size: clamp(1.9rem, 7vw, 2.8rem); }
+  .heroCta { width: 100%; text-align: center; }
+  .thumbnails { display: none; }
 }

@@ -1,53 +1,46 @@
-.mainContent {
-  flex: 1;
-  /* Removed background, border, shadow, and radius to kill the "container" look */
-  padding: 1px; 
-  
-  /* Reset margins so it touches the edges */
-  margin: 0;
-  
-  /* Keep layout properties */
+.page {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box; 
-  position: relative;
-
-  /* If you want it to scroll independently but look seamless: */
-  height: 100vh;
-  overflow-y: auto; 
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: #F6F5F1;
 }
 
-/* Simplified Mobile Override */
-@media (max-width: 1050px) {
-  .mainContent {
-    height: auto;      
-    min-height: 100vh;
-    overflow-y: visible; 
-  }
+.page::-webkit-scrollbar {
+  width: 5px;
 }
 
-.mainContent::-webkit-scrollbar {
-  display: none; 
+.page::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-/* Loading styles remain the same as they are full-screen anyway */
+.page::-webkit-scrollbar-thumb {
+  background: #c3a26f;
+  border-radius: 10px;
+}
+
+.page::-webkit-scrollbar-thumb:hover {
+  background: #a8845a;
+}
+
 .loadingContainer {
   height: 100vh;
   width: 100vw;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #ffffff;
+  background-color: #1a1510;
 }
 
 .loaderLogo {
-  width: 350px; 
+  width: 260px;
   height: auto;
-  animation: pulse 2s infinite ease-in-out;
+  animation: pulse 1.8s infinite ease-in-out;
 }
 
 @keyframes pulse {
-  0% { transform: scale(0.95); opacity: 0.7; }
-  50% { transform: scale(1.05); opacity: 1; }
-  100% { transform: scale(0.95); opacity: 0.7; }
+  0%   { transform: scale(0.96); opacity: 0.65; }
+  50%  { transform: scale(1.04); opacity: 1; }
+  100% { transform: scale(0.96); opacity: 0.65; }
 }
