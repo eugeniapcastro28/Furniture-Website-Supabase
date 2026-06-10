@@ -42,13 +42,13 @@
 
 .logoName {
   font-family: 'Cinzel', serif;
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: 1.12rem;
+  font-weight: 800;
   color: #6b5027;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   line-height: 1.35;
-  max-width: 220px;
+  max-width: 500px;
 }
 
 .navLinks {
