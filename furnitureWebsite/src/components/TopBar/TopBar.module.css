@@ -1,16 +1,29 @@
 .topBarContainer {
-  position: sticky;
+  position: fixed; 
   top: 0;
-  z-index: 1000;
+  left: 0;
+  z-index: 9999; 
   width: 100%;
-  transition: background 0.35s ease, box-shadow 0.35s ease;
-  background-color: transparent;
+  transition: background-color 0.4s ease, box-shadow 0.4s ease, backdrop-filter 0.4s ease, border-color 0.4s ease;
+  
+  /* 1. FROSTED GLASS BASE STATE (Top of page) */
+  background-color: rgba(246, 245, 241, 0.65); /* Highly transparent to let shapes pass underneath */
+  backdrop-filter: blur(20px);                  /* Heavy blur creates that premium milk-glass texture */
+  -webkit-backdrop-filter: blur(20px);           /* Crucial for iOS Safari support */
+  
+  /* Crisp glass border edge simulation */
+  border-bottom: 1px solid rgba(195, 162, 111, 0.15); 
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
 }
 
 .topBarContainer.scrolled {
-  background-color: rgba(246, 245, 241, 0.97);
-  box-shadow: 0 2px 20px rgba(107, 80, 39, 0.1);
-  backdrop-filter: blur(8px);
+  /* 2. SCROLLED STATE (Becomes slightly richer and more defined over moving content) */
+  background-color: rgba(246, 245, 241, 0.8) !important; 
+  backdrop-filter: blur(24px) !important;                 /* Extra blur depth for motion text legibility */
+  -webkit-backdrop-filter: blur(24px) !important;
+  
+  border-bottom: 1px solid rgba(195, 162, 111, 0.25);    /* Sharpens the edge slightly */
+  box-shadow: 0 10px 30px rgba(107, 80, 39, 0.06);        /* Elegant soft drop shadow */
 }
 
 .inner {
@@ -101,9 +114,12 @@
 .menuIcon:hover { color: #c3a26f; }
 
 @media (max-width: 1050px) {
-  .topBarContainer {
+  /* Removed solid background overrides here so the scrolling logic handles transparency on mobile too */
+  .topBarContainer { }
+
+  /* Keeps background solid only while user actively expands the full mobile dropdown drawer */
+  .topBarContainer:has(.mobileOpen) {
     background-color: rgba(246, 245, 241, 0.98);
-    box-shadow: 0 2px 10px rgba(107, 80, 39, 0.08);
   }
 
   .inner {
@@ -126,11 +142,17 @@
     top: 64px;
     left: 0;
     right: 0;
-    background-color: #F6F5F1;
     padding: 16px 0 24px;
     gap: 0;
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-    border-top: 1px solid rgba(195, 162, 111, 0.25);
+    
+    /* Matching mobile drawer frosted texture */
+    background-color: rgba(246, 245, 241, 0.85); 
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    
+    box-shadow: 0 12px 30px rgba(107, 80, 39, 0.1);
+    border-top: 1px solid rgba(195, 162, 111, 0.2);
+    border-bottom: 1px solid rgba(195, 162, 111, 0.2);
   }
 
   .navLinks.mobileOpen {

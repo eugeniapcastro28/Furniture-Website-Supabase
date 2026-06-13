@@ -6,6 +6,7 @@
 body {
   background-color: #F6F5F1 !important;
   color: #333333 !important;
+  padding-top: 76px;
 }
 
 html, body, #root {
@@ -33,3 +34,8 @@ html, body, #root {
   background: #a8845a;
 }
 
+@media (max-width: 1050px) {
+  body {
+    padding-top: 64px; /* Matches your mobile header height design */
+  }
+}

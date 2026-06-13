@@ -27,11 +27,13 @@ const App = () => {
   return (
     <div className={styles.page} data-scroll-container>
       <TopBar />
+      <main style={{ paddingTop: '76px' }}>
       <HomePage />
       <ProductsSection />
       <CategoriesSection />
       <AboutSection />
       <ContactSection />
+      </main>
     </div>
   );
 };
