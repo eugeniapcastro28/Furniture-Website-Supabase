@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import styles from './ProductsSection.module.css';
 import { products, categories } from '../../data/products';
 
-const ProductsSection = () => {
+// onSelectProduct is passed from App — clicking a card opens ProductDetail
+const ProductsSection = ({ onSelectProduct }) => {
   const [activeCategory, setActiveCategory] = useState('all');
-  const [modalItem, setModalItem] = useState(null);
 
   const filtered = activeCategory === 'all'
     ? products
@@ -45,7 +45,7 @@ const ProductsSection = () => {
           <div
             key={product.id}
             className={`${styles.card} ${i === 0 ? styles.cardFeatured : ''}`}
-            onClick={() => setModalItem(product)}
+            onClick={() => onSelectProduct(product)}
           >
             <div className={styles.imageWrap}>
               <img src={product.image} alt={product.name} loading="lazy" className={styles.cardImg} />
@@ -65,43 +65,6 @@ const ProductsSection = () => {
           </div>
         ))}
       </div>
-
-      {/* Modal */}
-      {modalItem && (
-        <div className={styles.modalOverlay} onClick={() => setModalItem(null)}>
-          <div className={styles.modal} onClick={e => e.stopPropagation()}>
-            <button className={styles.modalClose} onClick={() => setModalItem(null)}>✕</button>
-            <div className={styles.modalInner}>
-              <div className={styles.modalImgWrap}>
-                <img src={modalItem.image} alt={modalItem.name} className={styles.modalImg} />
-                {modalItem.tag && <span className={styles.modalTag}>{modalItem.tag}</span>}
-              </div>
-              <div className={styles.modalInfo}>
-                <span className={styles.modalCategory}>{modalItem.category}</span>
-                <h3 className={styles.modalName}>{modalItem.name}</h3>
-                <p className={styles.modalDesc}>{modalItem.description}</p>
-                <div className={styles.modalDetails}>
-                  <div className={styles.detailRow}>
-                    <span className={styles.detailLabel}>Material</span>
-                    <span className={styles.detailValue}>{modalItem.material}</span>
-                  </div>
-                  <div className={styles.detailRow}>
-                    <span className={styles.detailLabel}>Dimensions</span>
-                    <span className={styles.detailValue}>{modalItem.dimensions}</span>
-                  </div>
-                  <div className={styles.detailRow}>
-                    <span className={styles.detailLabel}>Category</span>
-                    <span className={styles.detailValue} style={{ textTransform: 'capitalize' }}>{modalItem.category}</span>
-                  </div>
-                </div>
-                <a href="#contact" className={styles.inquireBtn} onClick={() => setModalItem(null)}>
-                  Inquire About This Item
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </section>
   );
 };

@@ -1,0 +1,567 @@
+/* ── OVERLAY — sits above everything ───────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #F6F5F1;
+  overflow-y: auto;
+  animation: slideUp 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(48px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.galleryHeaderActions {
+  display: flex;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.inlineBackBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: #6b5027;
+  padding: 6px 0;
+  transition: color 0.25s ease;
+  position: relative;
+}
+
+.inlineBackBtn::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 1.5px;
+  background-color: #c3a26f;
+  transition: width 0.25s ease;
+}
+
+.inlineBackBtn:hover {
+  color: #c3a26f;
+}
+
+.inlineBackBtn:hover::after {
+  width: 100%;
+}
+
+.backArrow {
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: transform 0.22s ease;
+}
+
+.inlineBackBtn:hover .backArrow {
+  transform: translateX(-4px);
+}
+
+/* ── PAGE INNER ─────────────────────────────── */
+.page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 40px 40px 96px; /* Increased top padding */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column; /* Force clean sequential vertical flow */
+}
+
+/* ── TOP BAR ────────────────────────────────── */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Pushes breadcrumbs cleanly to the right */
+  margin-bottom: 32px;      /* Explicit breathing room before layout starts */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: 1.5px solid rgba(107, 80, 39, 0.25);
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: #6b5027;
+  padding: 9px 18px;
+  border-radius: 4px;
+  transition: all 0.22s ease;
+}
+
+.backBtn:hover {
+  background: #6b5027;
+  color: #f5ede0;
+  border-color: #6b5027;
+}
+
+.backArrow {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.crumbLink {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #c3a26f;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.crumbLink:hover { color: #6b5027; }
+
+.crumbSep {
+  color: #ccc;
+  font-size: 0.75rem;
+}
+
+.crumbCurrent {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #aaa;
+}
+
+/* ── MAIN LAYOUT ────────────────────────────── */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: start;
+  width: 100%;
+}
+
+/* ── GALLERY ────────────────────────────────── */
+.gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: sticky;
+  top: 40px; /* Aligned with page padding top for crisp tracking */
+}
+
+.mainImgWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #ece9e3;
+}
+
+.mainImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  animation: imgFade 0.3s ease both;
+}
+
+@keyframes imgFade {
+  from { opacity: 0; transform: scale(1.03); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.tag {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: #c3a26f;
+  color: #1a1510;
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 2px;
+}
+
+/* Thumbnails */
+.thumbRow {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.thumb {
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  cursor: pointer;
+  padding: 0;
+  background: #ece9e3;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.thumb:hover { transform: translateY(-2px); border-color: #c3a26f; }
+.thumbActive  { border-color: #6b5027; }
+
+.thumbImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── INFO PANEL ─────────────────────────────── */
+.info {
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 40px; /* Aligns clean tracking parallel with the gallery viewport */
+  max-height: calc(100vh - 136px); /* Locks sizing inside viewport window bounds */
+}
+
+/* New: Keeps identity information fixed at top */
+.stickyHeader {
+  background-color: #F6F5F1; /* Matches the overlay sheet canvas color */
+  padding-bottom: 12px;
+  z-index: 10;
+}
+
+/* ── SCROLLABLE CONTENT BLOCK ───────────────── */
+.scrollableContent {
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 16px; /* Added slight room so text doesn't touch the track */
+  margin-top: 8px;
+  
+  /* FireFox Support — sets track to transparent and thumb thin */
+  scrollbar-width: thin;
+  scrollbar-color: #c3a26f transparent;
+}
+
+/* 1. Track width/height sizing */
+.scrollableContent::-webkit-scrollbar {
+  width: 3px; /* Keeps the track beautifully ultra-thin */
+}
+
+/* 2. Completely isolates and removes the scrollbar up/down arrows */
+.scrollableContent::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* 3. Base track backdrop style */
+.scrollableContent::-webkit-scrollbar-track {
+  background: transparent; /* Seamless blend into your #F6F5F1 page canvas */
+}
+
+/* 4. Elegant custom moving capsule indicator */
+.scrollableContent::-webkit-scrollbar-thumb {
+  background-color: #c3a26f; /* Using your accent tone */
+  border-radius: 20px;       /* Keeps it pill-shaped and smooth */
+}
+
+/* Optional hover highlight effect */
+.scrollableContent::-webkit-scrollbar-thumb:hover {
+  background-color: #6b5027; /* Darkens cleanly when engaged */
+}
+
+.category {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #c3a26f;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.name {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 6px;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+.price {
+  font-family: 'Cinzel', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #6b5027;
+  margin: 0; /* Cleared bottom margins since it's an isolated block header */
+}
+
+.desc {
+  font-size: 0.92rem;
+  color: #666;
+  line-height: 1.75;
+  margin: 16px 0 28px; /* Balanced spacing around entry description text */
+}
+
+@media (max-width: 960px) {
+  .page    { padding: 24px 24px 72px; }
+  .layout  { grid-template-columns: 1fr; gap: 36px; }
+  .gallery { position: static; }
+  
+  /* Disables side scroll lockouts on smaller tablet/mobile viewports */
+  .info { 
+    position: static; 
+    max-height: none; 
+  }
+  .scrollableContent {
+    overflow-y: visible;
+    padding-right: 0;
+  }
+  .stickyHeader {
+    position: static;
+  }
+}
+
+/* ── BLOCKS (specs / details / care) ────────── */
+.specsBlock,
+.detailsBlock,
+.careBlock {
+  margin-bottom: 28px;
+}
+
+.blockTitle {
+  font-family: 'Cinzel', serif;
+  font-size: 0.63rem;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #1a1a1a;
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e2ddd7;
+}
+
+/* Spec rows */
+.specsGrid {
+  display: flex;
+  flex-direction: column;
+}
+
+.specItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid #ece9e3;
+}
+
+.specItem:last-child { border-bottom: none; }
+
+.specLabel {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #aaa;
+  flex-shrink: 0;
+  padding-right: 16px;
+  padding-top: 2px;
+}
+
+.specValue {
+  font-size: 0.84rem;
+  color: #3a2e1e;
+  font-weight: 500;
+  text-align: right;
+  line-height: 1.5;
+}
+
+/* Details text */
+.detailsText {
+  font-size: 0.88rem;
+  color: #666;
+  line-height: 1.78;
+  margin: 0;
+}
+
+/* Care list */
+.careList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.careItem {
+  font-size: 0.85rem;
+  color: #666;
+  line-height: 1.6;
+  padding-left: 18px;
+  position: relative;
+}
+
+.careItem::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: #c3a26f;
+  font-weight: 700;
+}
+
+/* ── CTA ROW ────────────────────────────────── */
+.ctaRow {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.inquireBtn {
+  flex: 1;
+  display: inline-block;
+  background-color: #6b5027;
+  color: #f5ede0;
+  font-family: 'Cinzel', serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 14px 24px;
+  border-radius: 4px;
+  text-align: center;
+  transition: background 0.25s ease, transform 0.2s ease;
+}
+
+.inquireBtn:hover {
+  background-color: #c3a26f;
+  color: #1a1510;
+  transform: translateY(-2px);
+}
+
+.shareBtn {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 14px 20px;
+  border-radius: 4px;
+  border: 1.5px solid rgba(107, 80, 39, 0.3);
+  background: transparent;
+  color: #6b5027;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.shareBtn:hover { border-color: #c3a26f; color: #c3a26f; }
+
+/* ── RELATED ────────────────────────────────── */
+.related {
+  margin-top: 80px;
+  padding-top: 56px;
+  border-top: 1px solid #e2ddd7;
+}
+
+.relatedTitle {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  font-weight: 400;
+  color: #1a1a1a;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 0 0 32px;
+  text-align: center;
+}
+
+.relatedGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.relatedCard {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: default;
+}
+
+.relatedImgWrap {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.relatedImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.relatedBody {
+  padding: 14px 16px 18px;
+}
+
+.relatedCategory {
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #c3a26f;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.relatedName {
+  font-family: 'Cinzel', serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 5px;
+}
+
+.relatedPrice {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #6b5027;
+  margin: 0;
+}
+
+/* ── RESPONSIVE ─────────────────────────────── */
+@media (max-width: 960px) {
+  .page    { padding: 24px 24px 72px; }
+  .layout  { grid-template-columns: 1fr; gap: 36px; }
+  .gallery { position: static; }
+  .relatedGrid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .page       { padding: 16px 16px 64px; }
+  .relatedGrid { grid-template-columns: 1fr; }
+  .ctaRow     { flex-direction: column; }
+  .inquireBtn,
+  .shareBtn   { width: 100%; text-align: center; }
+  .thumb      { width: 56px; height: 56px; }
+  .topBar     { flex-direction: column; align-items: flex-start; }
+}
