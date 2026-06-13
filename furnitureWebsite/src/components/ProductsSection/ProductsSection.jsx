@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import styles from './ProductsSection.module.css';
 import { products, categories } from '../../data/products';
+import { HiArrowRight } from 'react-icons/hi'; // Clean arrow icon for the view-all call to action
 
-// onSelectProduct is passed from App — clicking a card opens ProductDetail
-const ProductsSection = ({ onSelectProduct }) => {
+const ProductsSection = ({ onSelectProduct, onViewAll }) => {
   const [activeCategory, setActiveCategory] = useState('all');
 
   const filtered = activeCategory === 'all'
@@ -64,6 +64,22 @@ const ProductsSection = ({ onSelectProduct }) => {
             </div>
           </div>
         ))}
+
+        {/* View All Products Action Card */}
+        <div 
+          className={`${styles.card} ${styles.viewAllCard}`}
+          onClick={() => onViewAll && onViewAll()}
+        >
+          <div className={styles.viewAllContent}>
+            <div className={styles.iconCircle}>
+              <HiArrowRight className={styles.viewAllIcon} />
+            </div>
+            <h3 className={styles.viewAllTitle}>View All Products</h3>
+            <p className={styles.viewAllText}>
+              Explore our full catalog of handcrafted local items ({products.length} pieces)
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   );

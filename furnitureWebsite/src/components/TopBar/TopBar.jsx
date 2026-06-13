@@ -5,14 +5,14 @@ import mobileLogo from '../../assets/LOGO.png';
 import { HiMenuAlt3, HiX } from 'react-icons/hi';
 
 const navLinks = [
-  { href: '#home', label: 'Home' },
-  { href: '#products', label: 'Products' },
-  { href: '#categories', label: 'Categories' },
-  { href: '#about', label: 'About' },
-  { href: '#contact', label: 'Contact' },
+  { href: '#home', label: 'Home', page: 'home' },
+  { href: '#products', label: 'Products', page: 'products' },
+  { href: '#categories', label: 'Categories', page: 'home' },
+  { href: '#about', label: 'About', page: 'home' },
+  { href: '#contact', label: 'Contact', page: 'home' },
 ];
 
-const TopBar = () => {
+const TopBar = ({ currentPage = 'home', onNavigate }) => {
   const [activeLink, setActiveLink] = useState('#home');
   const [isMobile, setIsMobile] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -40,6 +40,44 @@ const TopBar = () => {
     return () => target.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Intersection Observer for dynamic active link highlighting based on scroll
+  useEffect(() => {
+    if (currentPage !== 'home') return undefined;
+
+    const observerOptions = {
+      root: null,
+      rootMargin: '-50% 0px -50% 0px',
+      threshold: 0,
+    };
+
+    const observerCallback = (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const sectionId = `#${entry.target.id}`;
+          setActiveLink(sectionId);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    const sections = document.querySelectorAll('[id]');
+    sections.forEach((section) => {
+      if (navLinks.some((link) => link.href === `#${section.id}`)) {
+        observer.observe(section);
+      }
+    });
+
+    return () => observer.disconnect();
+  }, [currentPage]);
+
+  useEffect(() => {
+    if (currentPage === 'products') {
+      setActiveLink('#products');
+    } else if (currentPage === 'home') {
+      setActiveLink('#home');
+    }
+  }, [currentPage]);
+
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) setIsMenuOpen(false);
@@ -48,9 +86,23 @@ const TopBar = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isMenuOpen]);
 
-  const handleLinkClick = (href) => {
-    setActiveLink(href);
+  const handleLinkClick = (href, page, event) => {
+    event.preventDefault();
     setIsMenuOpen(false);
+
+    if (page === 'products') {
+      onNavigate?.('products');
+      setActiveLink('#products');
+      return;
+    }
+
+    onNavigate?.('home');
+    setActiveLink(href);
+
+    setTimeout(() => {
+      const targetSection = document.querySelector(href);
+      targetSection?.scrollIntoView({ behavior: 'smooth' });
+    }, 50);
   };
 
   return (
@@ -62,12 +114,12 @@ const TopBar = () => {
         </div>
 
         <nav className={`${styles.navLinks} ${isMenuOpen ? styles.mobileOpen : ''}`}>
-          {navLinks.map(({ href, label }) => (
+          {navLinks.map(({ href, label, page }) => (
             <a
               key={href}
               href={href}
               className={`${styles.navItem} ${activeLink === href ? styles.active : ''}`}
-              onClick={() => handleLinkClick(href)}
+              onClick={(event) => handleLinkClick(href, page, event)}
             >
               {label}
             </a>
