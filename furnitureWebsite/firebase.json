@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "e-panganibanfurniture",
     "public": "dist",
     "ignore": [
       "firebase.json",
