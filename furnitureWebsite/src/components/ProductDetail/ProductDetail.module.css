@@ -565,3 +565,51 @@
   .thumb      { width: 56px; height: 56px; }
   .topBar     { flex-direction: column; align-items: flex-start; }
 }
+
+/* ── PRICE & STOCK INDICATOR ALIGNMENT ───────── */
+.priceRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.outOfStockBadge {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  background-color: #7d7265;
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 4px;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: block;
+}
+
+.backorderNotice {
+  display: block;
+  margin-top: 8px;
+  font-style: italic;
+  color: #8c7e6e;
+}
+
+/* ── RELATED CARD HEADER MUTING RULES ───────── */
+.relatedHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.relatedSoldOutMini {
+  font-family: 'Cinzel', serif;
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #7d7265;
+}

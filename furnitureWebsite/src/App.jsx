@@ -64,7 +64,6 @@ const App = () => {
             />
             <CategoriesSection />
             <AboutSection />
-            <ContactSection />
           </>
         ) : (
           <ProductsPage
@@ -72,6 +71,8 @@ const App = () => {
             onBack={() => setCurrentView('home')}
           />
         )}
+        {/* Contact Section appears on all pages */}
+        <ContactSection />
       </main>
 
       {/* ProductDetail slides in over the page — no router needed */}

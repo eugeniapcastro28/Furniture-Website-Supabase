@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import styles from '../ProductsSection/ProductsSection.module.css';
+import styles from './ProductsPage.module.css';
 import { products, categories } from '../../data/products';
 
 const ProductsPage = ({ onSelectProduct, onBack }) => {
@@ -21,9 +21,14 @@ const ProductsPage = ({ onSelectProduct, onBack }) => {
     document.body.scrollTop = 0;
   }, []);
 
+  // 1. First, apply category filters
   const filteredProducts = activeCategory === 'all'
     ? products
     : products.filter((product) => product.category === activeCategory);
+
+  // 2. Separate filtered results by inventory availability status
+  const availableProducts = filteredProducts.filter(p => p.inStock !== false);
+  const outOfStockProducts = filteredProducts.filter(p => p.inStock === false);
 
   return (
     <section id="products-page" className={styles.section}>
@@ -36,33 +41,17 @@ const ProductsPage = ({ onSelectProduct, onBack }) => {
         </p>
       </div>
 
-      <div style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: '16px',
-        maxWidth: '1200px',
-        margin: '0 auto 40px',
-      }}>
-        <div />
+      <div className={styles.pageActions}>
         <button
           type="button"
           onClick={onBack}
-          style={{
-            border: 'none',
-            borderRadius: '999px',
-            padding: '14px 24px',
-            background: '#111',
-            color: '#fff',
-            cursor: 'pointer',
-            minWidth: '180px',
-          }}
+          className={styles.backHomeBtn}
         >
-          Back to Homepage
+          <span className={styles.backArrow}>←</span> Back to Homepage
         </button>
       </div>
 
+      {/* Categories Switcher */}
       <div className={styles.filters}>
         <button
           className={`${styles.filterBtn} ${activeCategory === 'all' ? styles.filterActive : ''}`}
@@ -81,31 +70,89 @@ const ProductsPage = ({ onSelectProduct, onBack }) => {
         ))}
       </div>
 
-      <div className={styles.grid}>
-        {filteredProducts.map((product, index) => (
-          <div
-            key={product.id}
-            className={`${styles.card} ${index === 0 ? styles.cardFeatured : ''}`}
-            onClick={() => onSelectProduct(product)}
-          >
-            <div className={styles.imageWrap}>
-              <img src={product.image} alt={product.name} loading="lazy" className={styles.cardImg} />
-              <div className={styles.cardOverlay}>
-                <span className={styles.viewBtn}>View Details</span>
+      {/* ── SECTION 1: AVAILABLE PRODUCTS ── */}
+      {availableProducts.length > 0 && (
+        <div className={styles.stockSection}>
+          {/* <h2 className={styles.stockTitle}>Available Pieces</h2> */}
+          <div className={styles.grid}>
+            {availableProducts.map((product) => (
+              <div
+                key={product.id}
+                className={styles.card}
+                onClick={() => onSelectProduct(product)}
+              >
+                <div className={styles.imageWrap}>
+                  <img src={product.image} alt={product.name} loading="lazy" className={styles.cardImg} />
+                  <div className={styles.cardOverlay}>
+                    <span className={styles.viewBtn}>View Details</span>
+                  </div>
+                  {product.tag && <span className={styles.tag}>{product.tag}</span>}
+                </div>
+                
+                <div className={styles.cardBody}>
+                  <div className={styles.cardHeaderRow}>
+                    <span className={styles.cardCategory}>{product.category}</span>
+                    {product.price && <span className={styles.cardPrice}>{product.price}</span>}
+                  </div>
+                  
+                  <h3 className={styles.cardName}>{product.name}</h3>
+                  <p className={styles.cardDesc}>{product.description}</p>
+                  
+                  <div className={styles.cardMeta}>
+                    <span>{product.material}</span>
+                  </div>
+                </div>
               </div>
-              {product.tag && <span className={styles.tag}>{product.tag}</span>}
-            </div>
-            <div className={styles.cardBody}>
-              <span className={styles.cardCategory}>{product.category}</span>
-              <h3 className={styles.cardName}>{product.name}</h3>
-              <p className={styles.cardDesc}>{product.description}</p>
-              <div className={styles.cardMeta}>
-                <span>{product.material}</span>
-              </div>
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      )}
+
+      {/* ── SECTION 2: OUT OF STOCK PRODUCTS ── */}
+      {outOfStockProducts.length > 0 && (
+        <div className={`${styles.stockSection} ${styles.outOfStockContainer}`}>
+          <div className={styles.sectionSeparator} />
+          <h2 className={styles.stockTitle}>Temporarily Out of Stock</h2>
+          <div className={styles.grid}>
+            {outOfStockProducts.map((product) => (
+              <div
+                key={product.id}
+                className={`${styles.card} ${styles.cardDisabled}`}
+                onClick={() => onSelectProduct(product)} // Kept clickable so users can still see details or backorder
+              >
+                <div className={styles.imageWrap}>
+                  <img src={product.image} alt={product.name} loading="lazy" className={styles.cardImg} />
+                  <div className={styles.cardOverlay}>
+                    <span className={styles.viewBtn}>View Details</span>
+                  </div>
+                  <span className={`${styles.tag} ${styles.soldOutTag}`}>Out of Stock</span>
+                </div>
+                
+                <div className={styles.cardBody}>
+                  <div className={styles.cardHeaderRow}>
+                    <span className={styles.cardCategory}>{product.category}</span>
+                    {product.price && <span className={styles.cardPrice}>{product.price}</span>}
+                  </div>
+                  
+                  <h3 className={styles.cardName}>{product.name}</h3>
+                  <p className={styles.cardDesc}>{product.description}</p>
+                  
+                  <div className={styles.cardMeta}>
+                    <span>{product.material}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Fallback state if both containers filter to empty */}
+      {filteredProducts.length === 0 && (
+        <div style={{ textAlign: 'center', padding: '40px', color: '#888' }}>
+          No products found in this category.
+        </div>
+      )}
     </section>
   );
 };

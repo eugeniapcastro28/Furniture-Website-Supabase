@@ -30,7 +30,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #1a1510;
+  background-color: #F6F5F1; /* match page background (light) */
 }
 
 .loaderLogo {

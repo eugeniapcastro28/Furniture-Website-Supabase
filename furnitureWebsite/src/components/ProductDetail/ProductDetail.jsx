@@ -56,7 +56,7 @@ const ProductDetail = ({ product, onClose, onSelectProduct }) => {
               />
               {product.tag && <span className={styles.tag}>{product.tag}</span>}
             </div>
-
+              {!product.inStock && <span className={styles.outOfStockBadge}>Out of Stock</span>}
             {images.length > 1 && (
               <div className={styles.thumbRow}>
                 {images.map((src, idx) => (

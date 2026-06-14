@@ -7,6 +7,7 @@
   flex-direction: column;
   overflow: hidden;
   background-color: #1a1510;
+  scroll-margin-top: 76px;
 }
 
 /* ── BACKGROUND ────────────────────────────────── */
