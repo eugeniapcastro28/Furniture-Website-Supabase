@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'; // Added useEffect
 import styles from './TopBar.module.css';
 import logo from '../../assets/No Name.png';
-import mobileLogo from '../../assets/LOGO.png'; // Import your mobile logo
+import mobileLogo from '../../assets/LOGO.webp'; // Import your mobile logo
 import { HiMenuAlt3 } from "react-icons/hi"; 
 
 const TopBar = () => {

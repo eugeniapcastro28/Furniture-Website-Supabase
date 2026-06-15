@@ -30,23 +30,36 @@ const HomePage = () => {
   const active = featuredProducts[activeIndex];
   const previous = featuredProducts[prevIndex];
 
+  // 🌟 PERFORMANCE WIN: Isolate the absolute first product asset to determine LCP initialization
+  const initialLCPId = featuredProducts[0]?.id;
+
   return (
     <section id="home" className={styles.hero}>
       {/* Background image layer */}
       <div className={styles.heroBg}>
-        {/* Previous slide stays underneath while fading out */}
         {isTransitioning && previous && (
-          <div
+          <img
+            src={previous.image}
+            alt=""
+            role="presentation"
+            /* 🌟 Hardcoded width/height properties stop layout bouncing */
+            width="1400"
+            height="788"
             className={`${styles.heroBgSlide} ${styles.heroBgFadeOut}`}
-            style={{ backgroundImage: `url(${previous.image})` }}
           />
         )}
         
         {/* Active current slide on top fading in cleanly */}
-        <div
+        <img
           key={active.id}
+          src={active.image}
+          alt={active.name}
+          /* 🌟 CRITICAL FIXES FOR LIGHTHOUSE LCP: */
+          fetchpriority={active.id === initialLCPId ? "high" : "auto"} 
+          loading={active.id === initialLCPId ? "eager" : "lazy"} 
+          width="1400"
+          height="788"
           className={`${styles.heroBgSlide} ${styles.heroBgActive}`}
-          style={{ backgroundImage: `url(${active.image})` }}
         />
         
         <div className={styles.heroBgOverlay} />

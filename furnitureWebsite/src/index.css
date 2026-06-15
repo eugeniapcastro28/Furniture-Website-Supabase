@@ -1,19 +1,66 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;800&display=swap');
+/* src/index.css */
+
+/* 1. Keep your optimized local font files */
+@font-face {
+  font-family: 'Cinzel';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./assets/fonts/cinzel-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cinzel';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./assets/fonts/cinzel-700.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cinzel';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('./assets/fonts/cinzel-800.woff2') format('woff2');
+}
+
 :root {
   color-scheme: light;
 }
 
+/* 2. Remove Cinzel from the body so descriptions fall back to normal lowercase */
 body {
   background-color: #F6F5F1 !important;
   color: #333333 !important;
   padding-top: 76px;
+  font-family: 'Times New Roman', Times, serif; /* Matches your clean original description fallback */
 }
 
+/* 3. Explicitly apply Cinzel ONLY to titles, navigation, and headers */
+h1, h2, h3, h4, h5, h6,
+.navbar, .nav-links, .logo,
+button, .view-all-btn,
+[class*="title"], [class*="Title"], [class*="heading"] {
+  font-family: 'Cinzel', serif;
+}
+
+.subtitle, 
+[class*="subtitle"], 
+[class*="Subtitle"],
+.category-tag {
+  font-family: 'Times New Roman', Times, serif !important;
+  text-transform: none !important; /* Disables any CSS forcing it to UPPERCASE */
+}
+
+/* ==========================================
+   Your remaining structural layout styles 
+   ========================================== */
 html, body, #root {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow-x: hidden; /* This prevents the whole page from scrolling so only the containers do */
+  overflow-x: hidden;
 }
 
 /* Slim aesthetic scrollbar */
@@ -26,7 +73,7 @@ html, body, #root {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c3a26f; /* Matches your gold dot color */
+  background: #c3a26f;
   border-radius: 10px;
 }
 
@@ -41,6 +88,6 @@ html, body, #root {
 
 @media (max-width: 1050px) {
   body {
-    padding-top: 64px; /* Matches your mobile header height design */
+    padding-top: 64px;
   }
 }

@@ -86,6 +86,20 @@
   margin: 0 auto;
 }
 
+@media (max-width: 960px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
 /* ── CARD ───────────────────────────────────── */
 .card {
   background: #fff;

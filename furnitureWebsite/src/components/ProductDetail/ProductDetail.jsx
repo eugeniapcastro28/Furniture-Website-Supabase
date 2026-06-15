@@ -69,12 +69,22 @@ const ProductDetail = ({ product, onClose, onSelectProduct }) => {
             </div>
 
             <div className={styles.mainImgWrap}>
-              <img
-                key={activeImg}
-                src={images[activeImg]}
-                alt={`${product.name} view ${activeImg + 1}`}
-                className={styles.mainImg}
-              />
+              <picture>
+                {product.imagesWebp?.[activeImg] && <source type="image/webp" srcSet={product.imagesWebp[activeImg]} />}
+                {activeImg === 0 && product.imageWebp && !product.imagesWebp?.[0] && (
+                  <source type="image/webp" srcSet={product.imageWebp} />
+                )}
+                <img
+                  key={activeImg}
+                  src={images[activeImg]}
+                  alt={`${product.name} view ${activeImg + 1}`}
+                  className={styles.mainImg}
+                  loading="eager"
+                  decoding="async"
+                  width={product.imageWidth}
+                  height={product.imageHeight}
+                />
+              </picture>
               {product.tag && <span className={styles.tag}>{product.tag}</span>}
             </div>
             {!product.inStock && <span className={styles.outOfStockBadge}>Out of Stock</span>}
@@ -87,7 +97,10 @@ const ProductDetail = ({ product, onClose, onSelectProduct }) => {
                     onClick={() => setActiveImg(idx)}
                     aria-label={`View image ${idx + 1}`}
                   >
-                    <img src={src} alt="" className={styles.thumbImg} />
+                    <picture>
+                      {product.imagesWebp?.[idx] && <source type="image/webp" srcSet={product.imagesWebp[idx]} />}
+                      <img src={src} alt="" className={styles.thumbImg} width="72" height="72" />
+                    </picture>
                   </button>
                 ))}
               </div>
@@ -200,11 +213,18 @@ const RelatedCard = ({ product, onSelect }) => (
     aria-label={`View details for ${product.name}`}
   >
     <div className={styles.relatedImgWrap}>
-      <img
-        src={product.images?.[0] || product.image}
-        alt={product.name}
-        className={styles.relatedImg}
-      />
+      <picture>
+        {product.imageWebp && <source type="image/webp" srcSet={product.imageWebp} />}
+        <img
+          src={product.images?.[0] || product.image}
+          alt={product.name}
+          className={styles.relatedImg}
+          width={product.imageWidth}
+          height={product.imageHeight}
+          loading="lazy"
+          decoding="async"
+        />
+      </picture>
       <div className={styles.relatedOverlay}>
         <span className={styles.relatedViewBtn}>View Details</span>
       </div>

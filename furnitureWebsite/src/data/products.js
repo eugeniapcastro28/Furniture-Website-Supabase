@@ -1,13 +1,13 @@
 import img1 from '../assets/1.webp';
 import img2 from '../assets/2.webp';
 import img3 from '../assets/3.webp';
-import img4 from '../assets/4.png';
-import img5 from '../assets/5.png';
-import rattanSala from '../assets/rattanSala.png';
-import rattanSalaSet from '../assets/rattanSalaSet.png';
-import rattanRocking from '../assets/rattanRocking.png';
-import sofa from '../assets/sofa.png';
-import woodRocking from '../assets/woodRocking.png';
+import img4 from '../assets/4.webp';
+import img5 from '../assets/5.webp';
+import rattanSala from '../assets/rattanSala.webp';
+import rattanSalaSet from '../assets/rattanSalaSet.webp';
+import rattanRocking from '../assets/rattanRocking.webp';
+import sofa from '../assets/sofa.webp';
+import woodRocking from '../assets/woodRocking.webp';
 
 export const categories = [
   { id: 'seating', label: 'Seating' },

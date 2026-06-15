@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import styles from './App.module.css';
-import logo from './assets/LOGO.png';
+import logo from './assets/LOGO.webp';
 import TopBar from './components/TopBar/TopBar';
 import HomePage from './components/HomePage/HomePage';
 import ProductsSection from './components/ProductsSection/ProductsSection';

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './TopBar.module.css';
 import logo from '../../assets/No Name.png';
-import mobileLogo from '../../assets/LOGO.png';
+import mobileLogo from '../../assets/LOGO.webp';
 import { HiMenuAlt3, HiX } from 'react-icons/hi';
 
 const navLinks = [
