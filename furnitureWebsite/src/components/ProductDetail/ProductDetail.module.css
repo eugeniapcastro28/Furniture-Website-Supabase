@@ -5,12 +5,12 @@
   z-index: 1000;
   background: #F6F5F1;
   overflow-y: auto;
-  animation: slideUp 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: fadeSlideUp 0.7s ease both;
 }
 
-@keyframes slideUp {
-  from { transform: translateY(48px); opacity: 0; }
-  to   { transform: translateY(0);    opacity: 1; }
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .galleryHeaderActions {
@@ -70,10 +70,24 @@
 .page {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 40px 40px 96px; /* Increased top padding */
+  padding: 40px 40px 96px;
   box-sizing: border-box;
   display: flex;
-  flex-direction: column; /* Force clean sequential vertical flow */
+  flex-direction: column; 
+  animation: detailsRefresh 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes detailsRefresh {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(4px); /* Optional: Soft luxury blur entry */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
 }
 
 /* ── TOP BAR ────────────────────────────────── */
@@ -503,13 +517,51 @@
   background: #fff;
   border-radius: 12px;
   overflow: hidden;
-  cursor: default;
+  cursor: pointer;              /* Shows a clickable hand icon when hovering */
+  border: none;                 /* Clears default native button frame borders */
+  padding: 0;                   /* Clears default browser container padding */
+  text-align: left;             /* Retains pristine left alignments for labels */
+  width: 100%;                  /* Lets button block fill standard column grid slots */
+  display: block;               /* Changes layout orientation to fit blocks neatly */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .relatedImgWrap {
+  position: relative;
   width: 100%;
   aspect-ratio: 4 / 3;
   overflow: hidden;
+}
+
+.relatedCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.relatedOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(26, 21, 16, 0.3); /* Premium dark transparency blur */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.relatedCard:hover .relatedOverlay {
+  opacity: 1;
+}
+
+.relatedViewBtn {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #fff;
+  border: 1px solid #fff;
+  padding: 8px 16px;
+  border-radius: 4px;
 }
 
 .relatedImg {
@@ -517,6 +569,7 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform 0.3s ease;
 }
 
 .relatedBody {
@@ -612,4 +665,9 @@
   letter-spacing: 0.5px;
   text-transform: uppercase;
   color: #7d7265;
+}
+
+.bottomContactBlock {
+  margin-top: 5rem;
+  width: 100%;
 }

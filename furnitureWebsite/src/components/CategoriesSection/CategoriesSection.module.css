@@ -3,6 +3,7 @@
   background-color: #1a1510;
   padding: 96px 40px;
   box-sizing: border-box;
+  animation: fadeSlideUp 0.7s ease both;
 }
 
 /* ── HEADER ─────────────────────────────────── */

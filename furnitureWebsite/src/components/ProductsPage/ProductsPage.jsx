@@ -1,25 +1,67 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styles from './ProductsPage.module.css';
 import { products, categories } from '../../data/products';
 
 const ProductsPage = ({ onSelectProduct, onBack }) => {
   const [activeCategory, setActiveCategory] = useState('all');
+  const [visibleProductIds, setVisibleProductIds] = useState([]);
+  const observer = useRef(null);
 
+  // ── FOOLPROOF VIEWPORT TOP SNAP RESET ──────────────────────────────────────
   useEffect(() => {
-    const page = document.querySelector('[data-scroll-container]');
-    const section = document.getElementById('products-page');
-    if (section) {
-      section.scrollIntoView({ behavior: 'auto', block: 'start', inline: 'nearest' });
-    }
-    if (page) {
-      page.scrollTop = 0;
-      page.scrollLeft = 0;
-      page.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-    }
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
+    // Target the specialized parent layout node frame container
+    const scrollContainer = document.querySelector('[data-scroll-container]');
+    
+    const resetViewportToTop = () => {
+      if (scrollContainer) {
+        scrollContainer.scrollTop = 0;
+        scrollContainer.scrollLeft = 0;
+      }
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    };
+
+    // Immediate initial execution snap task
+    resetViewportToTop();
+
+    // Secondary execution check to protect against slow browser painting threads
+    const backupTimer = setTimeout(() => {
+      resetViewportToTop();
+    }, 15);
+
+    return () => clearTimeout(backupTimer);
   }, []);
+
+  // ── INTERSECTION OBSERVER ANIMATION REVEALS ──────────────────────────────
+  useEffect(() => {
+    setVisibleProductIds([]);
+
+    if (typeof IntersectionObserver === 'undefined') {
+      return undefined;
+    }
+
+    const elements = document.querySelectorAll('[data-reveal-card]');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const id = entry.target.dataset.revealCard;
+          setVisibleProductIds((current) => (
+            current.includes(id) ? current : [...current, id]
+          ));
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -10px 0px' });
+
+    elements.forEach((el) => io.observe(el));
+    observer.current = io;
+
+    return () => {
+      observer.current?.disconnect();
+      observer.current = null;
+    };
+  }, [activeCategory]);
 
   // 1. First, apply category filters
   const filteredProducts = activeCategory === 'all'
@@ -73,12 +115,12 @@ const ProductsPage = ({ onSelectProduct, onBack }) => {
       {/* ── SECTION 1: AVAILABLE PRODUCTS ── */}
       {availableProducts.length > 0 && (
         <div className={styles.stockSection}>
-          {/* <h2 className={styles.stockTitle}>Available Pieces</h2> */}
           <div className={styles.grid}>
             {availableProducts.map((product) => (
               <div
                 key={product.id}
-                className={styles.card}
+                data-reveal-card={product.id}
+                className={`${styles.card} ${visibleProductIds.includes(product.id.toString()) ? styles.cardVisible : ''}`}
                 onClick={() => onSelectProduct(product)}
               >
                 <div className={styles.imageWrap}>
@@ -117,8 +159,9 @@ const ProductsPage = ({ onSelectProduct, onBack }) => {
             {outOfStockProducts.map((product) => (
               <div
                 key={product.id}
-                className={`${styles.card} ${styles.cardDisabled}`}
-                onClick={() => onSelectProduct(product)} // Kept clickable so users can still see details or backorder
+                data-reveal-card={product.id}
+                className={`${styles.card} ${styles.cardDisabled} ${visibleProductIds.includes(product.id.toString()) ? styles.cardVisible : ''}`}
+                onClick={() => onSelectProduct(product)}
               >
                 <div className={styles.imageWrap}>
                   <img src={product.image} alt={product.name} loading="lazy" className={styles.cardImg} />

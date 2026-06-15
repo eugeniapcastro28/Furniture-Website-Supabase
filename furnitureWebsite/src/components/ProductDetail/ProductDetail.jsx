@@ -1,12 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './ProductDetail.module.css';
 import { products } from '../../data/products';
+import ContactSection from '../ContactSection/ContactSection';
 
 const ProductDetail = ({ product, onClose, onSelectProduct }) => {
   const [activeImg, setActiveImg] = useState(0);
+  const contactRef = useRef(null);
+  const overlayRef = useRef(null);
 
-  // Reset gallery when product changes
-  useEffect(() => { setActiveImg(0); }, [product]);
+  // CRITICAL SMOOTH FIX: Glides back to top smoothly when product state changes
+  useEffect(() => { 
+    setActiveImg(0); 
+    
+    if (overlayRef.current) {
+      overlayRef.current.scrollTo({
+        top: 0,
+        behavior: 'smooth' // Changed from instant to smooth
+      });
+    }
+  }, [product]);
 
   // Close on Escape key
   useEffect(() => {
@@ -22,9 +34,18 @@ const ProductDetail = ({ product, onClose, onSelectProduct }) => {
     .filter(p => p.category === product.category && p.id !== product.id)
     .slice(0, 3);
 
+  const scrollToContact = (e) => {
+    e.preventDefault();
+    contactRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
-    <div className={styles.overlay}>
-      <div className={styles.page}>
+    <div ref={overlayRef} className={styles.overlay}>
+      {/* ✨ KEY TRICK: Passing product.id as a 'key' to the page element 
+        forces React to re-trigger the CSS fade-in animation safely 
+        every single time the product changes.
+      */}
+      <div className={styles.page} key={product.id}>
 
         {/* ── Top Bar / Breadcrumbs ─────────────────── */}
         <div className={styles.topBar}>
@@ -56,7 +77,7 @@ const ProductDetail = ({ product, onClose, onSelectProduct }) => {
               />
               {product.tag && <span className={styles.tag}>{product.tag}</span>}
             </div>
-              {!product.inStock && <span className={styles.outOfStockBadge}>Out of Stock</span>}
+            {!product.inStock && <span className={styles.outOfStockBadge}>Out of Stock</span>}
             {images.length > 1 && (
               <div className={styles.thumbRow}>
                 {images.map((src, idx) => (
@@ -75,15 +96,12 @@ const ProductDetail = ({ product, onClose, onSelectProduct }) => {
 
           {/* Right — Info */}
           <div className={styles.info}>
-            
-            {/* STICKY HEADER BLOCK: Locks Category, Name, and Price */}
             <div className={styles.stickyHeader}>
               <span className={styles.category}>{product.category}</span>
               <h1 className={styles.name}>{product.name}</h1>
               {product.price && <p className={styles.price}>{product.price}</p>}
             </div>
 
-            {/* SCROLLABLE CONTENT BLOCK: Scrolls smoothly underneath */}
             <div className={styles.scrollableContent}>
               <p className={styles.desc}>{product.description}</p>
 
@@ -131,9 +149,9 @@ const ProductDetail = ({ product, onClose, onSelectProduct }) => {
                 </div>
               )}
 
-              {/* CTA Row attached inside scrolling zone or right below */}
+              {/* CTA Row */}
               <div className={styles.ctaRow}>
-                <a href="#contact" className={styles.inquireBtn} onClick={onClose}>
+                <a href="#contact" className={styles.inquireBtn} onClick={scrollToContact}>
                   Inquire About This Piece
                 </a>
                 <button
@@ -144,7 +162,6 @@ const ProductDetail = ({ product, onClose, onSelectProduct }) => {
                 </button>
               </div>
             </div>
-
           </div>
         </div>
 
@@ -165,18 +182,22 @@ const ProductDetail = ({ product, onClose, onSelectProduct }) => {
         )}
 
       </div>
+
+      <div ref={contactRef} className={styles.bottomContactBlock}>
+        <ContactSection />
+      </div>
+
     </div>
   );
 };
 
-/* ── Related Card ────────────────────────────── */
+/* ── Related Card ── */
 const RelatedCard = ({ product, onSelect }) => (
-  <div
+  <button
     className={styles.relatedCard}
     onClick={() => onSelect(product)}
-    role="button"
-    tabIndex={0}
-    onKeyDown={(e) => e.key === 'Enter' && onSelect(product)}
+    type="button"
+    aria-label={`View details for ${product.name}`}
   >
     <div className={styles.relatedImgWrap}>
       <img
@@ -193,7 +214,7 @@ const RelatedCard = ({ product, onSelect }) => (
       <h3 className={styles.relatedName}>{product.name}</h3>
       {product.price && <p className={styles.relatedPrice}>{product.price}</p>}
     </div>
-  </div>
+  </button>
 );
 
 export default ProductDetail;

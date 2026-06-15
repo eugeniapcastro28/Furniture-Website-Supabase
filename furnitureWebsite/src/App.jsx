@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react'
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import styles from './App.module.css';
 import logo from './assets/LOGO.png';
 import TopBar from './components/TopBar/TopBar';
@@ -53,7 +53,12 @@ const App = () => {
 
   return (
     <div className={styles.page} data-scroll-container>
-      <TopBar currentPage={currentView} onNavigate={setCurrentView} />
+      {/* Added onClearProduct prop to close modal when navbar links are clicked */}
+      <TopBar 
+        currentPage={currentView} 
+        onNavigate={setCurrentView} 
+        onClearProduct={() => setSelectedProduct(null)}
+      />
       <main style={{ paddingTop: '76px' }}>
         {currentView === 'home' ? (
           <>
@@ -80,6 +85,8 @@ const App = () => {
         <ProductDetail
           product={selectedProduct}
           onClose={() => setSelectedProduct(null)}
+          // CRITICAL FIX: Pass down the state setter so related items can open!
+          onSelectProduct={setSelectedProduct} 
         />
       )}
     </div>

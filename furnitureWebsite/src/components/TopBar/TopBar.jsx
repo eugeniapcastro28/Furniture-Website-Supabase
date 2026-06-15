@@ -12,7 +12,7 @@ const navLinks = [
   { href: '#contact', label: 'Contact', page: 'home' },
 ];
 
-const TopBar = ({ currentPage = 'home', onNavigate }) => {
+const TopBar = ({ currentPage = 'home', onNavigate, onClearProduct }) => {
   const [activeLink, setActiveLink] = useState('#home');
   const [isMobile, setIsMobile] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -89,6 +89,12 @@ const TopBar = ({ currentPage = 'home', onNavigate }) => {
   const handleLinkClick = (href, page, event) => {
     event.preventDefault();
     setIsMenuOpen(false);
+
+    // CRITICAL FIX: Clear out the open product details overlay 
+    // to unblock the main layout viewport canvas.
+    if (onClearProduct) {
+      onClearProduct();
+    }
 
     if (page === 'products') {
       onNavigate?.('products');

@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './ContactSection.module.css';
 import { HiPhone, HiMail, HiLocationMarker } from 'react-icons/hi';
-import logo from '../../assets/LOGO.png';
+import logo from '../../assets/logoWhite.png';
 
 const contactInfo = [
   { icon: HiPhone, label: 'Phone', value: '+63 912 345 6789' },

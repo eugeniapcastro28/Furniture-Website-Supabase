@@ -1,68 +1,96 @@
-/* ── HERO ──────────────────────────────────────── */
+/* ── HERO CONTAINER ──────────────────────────────────────── */
 .hero {
   position: relative;
   width: 100%;
-  min-height: calc(100vh - 76px);
+  height: calc(100vh - 76px); /* Forces exact remaining screen layout sizing */
+  min-height: 600px; /* Prevents text crushing on ultra-short display screens */
   display: flex;
   flex-direction: column;
   overflow: hidden;
   background-color: #1a1510;
   scroll-margin-top: 76px;
+  box-sizing: border-box;
 }
 
-/* ── BACKGROUND ────────────────────────────────── */
+/* ── BACKGROUND SLIDESHOW MANAGEMENT ─────────────────────── */
 .heroBg {
   position: absolute;
   inset: 0;
   z-index: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 .heroBgSlide {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
   background-size: cover;
   background-position: center;
-  opacity: 0;
-  transition: opacity 1.2s ease-in-out; /* Slightly smoother transition for full screen */
+  background-repeat: no-repeat;
+  backface-visibility: hidden;
+  will-change: opacity;
 }
 
-.heroBgActive { opacity: 1; }
+/* Keyframe entry animation prevents image overlap ghosting altogether */
+.heroBgActive {
+  z-index: 2;
+  animation: cleanFadeIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.heroBgFadeOut {
+  z-index: 1;
+  opacity: 1;
+  animation: cleanFadeOut 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes cleanFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes cleanFadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
 
 .heroBgOverlay {
   position: absolute;
   inset: 0;
+  z-index: 3; /* Always positioned strictly above images, below text layers */
   background: linear-gradient(
     105deg,
-    rgba(20, 14, 8, 0.85) 0%,
-    rgba(20, 14, 8, 0.6) 50%,
-    rgba(20, 14, 8, 0.3) 100%
+    rgba(20, 14, 8, 0.82) 0%,
+    rgba(20, 14, 8, 0.55) 50%,
+    rgba(20, 14, 8, 0.25) 100%
   );
 }
 
-/* ── CONTENT ───────────────────────────────────── */
+/* ── CONTENT CONTAINER SYSTEM ──────────────────────────────── */
 .heroContent {
   position: relative;
-  z-index: 2;
+  z-index: 4;
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* Aligns items to the left side */
+  justify-content: flex-start;
   max-width: 1300px;
   width: 100%;
+  height: 100%;
   margin: 0 auto;
-  padding: 64px 40px 80px;
+  padding: 40px 40px 60px;
+  box-sizing: border-box;
   flex: 1;
 }
 
-/* ── LEFT ──────────────────────────────────────── */
+/* ── LEFT LAYOUT BLOCK ─────────────────────────────────────── */
 .heroLeft {
-  flex: 1;
-  max-width: 600px; /* Expanded slightly for better composition on wide screens */
-  animation: fadeSlideUp 0.7s ease both;
-}
-
-@keyframes fadeSlideUp {
-  from { opacity: 0; transform: translateY(28px); }
-  to   { opacity: 1; transform: translateY(0); }
+  width: 100%;
+  max-width: 650px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .heroEyebrow {
@@ -76,6 +104,7 @@
   padding: 6px 14px;
   border: 1px solid rgba(195, 162, 111, 0.4);
   border-radius: 20px;
+  background-color: rgba(20, 14, 8, 0.4);
 }
 
 .heroTitle {
@@ -83,27 +112,30 @@
   font-size: clamp(2.4rem, 4.5vw, 4.2rem);
   font-weight: 700;
   color: #f5ede0;
-  line-height: 1.1;
+  line-height: 1.15;
   margin: 0 0 20px;
   letter-spacing: 1px;
-  animation: fadeSlideUp 0.7s 0.1s ease both;
+  animation: textReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes textReveal {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .heroDesc {
   font-size: 1rem;
-  color: rgba(245, 237, 224, 0.75);
+  color: rgba(245, 237, 224, 0.8);
   line-height: 1.7;
-  margin-bottom: 28px;
-  max-width: 460px;
-  animation: fadeSlideUp 0.7s 0.2s ease both;
+  margin: 0 0 28px 0;
+  max-width: 490px;
 }
 
+/* ── METADATA SUB-VALUES ──────────────────────────────────── */
 .heroMeta {
   display: flex;
-  align-items: flex-start;
-  gap: 0;
+  align-items: center;
   margin-bottom: 36px;
-  animation: fadeSlideUp 0.7s 0.3s ease both;
 }
 
 .metaItem {
@@ -127,7 +159,7 @@
 
 .metaDivider {
   width: 1px;
-  height: 40px;
+  height: 32px;
   background: rgba(195, 162, 111, 0.3);
   margin: 0 24px;
 }
@@ -145,7 +177,6 @@
   padding: 14px 32px;
   border-radius: 4px;
   transition: background 0.25s ease, transform 0.2s ease;
-  animation: fadeSlideUp 0.7s 0.4s ease both;
 }
 
 .heroCta:hover {
@@ -153,18 +184,18 @@
   transform: translateY(-2px);
 }
 
-/* ── SCROLL HINT ───────────────────────────────── */
+/* ── SCROLL HINT INDICATOR ──────────────────────────────── */
 .scrollHint {
   position: absolute;
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 3;
+  z-index: 5;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  opacity: 0.5;
+  pointer-events: none;
 }
 
 .scrollLine {
@@ -175,8 +206,8 @@
 }
 
 @keyframes scrollPulse {
-  0%, 100% { transform: scaleY(1); opacity: 0.5; }
-  50% { transform: scaleY(0.6); opacity: 1; }
+  0%, 100% { transform: scaleY(1); opacity: 0.3; }
+  50% { transform: scaleY(0.6); opacity: 0.9; }
 }
 
 .scrollLabel {
@@ -185,134 +216,30 @@
   letter-spacing: 3px;
   text-transform: uppercase;
   color: #c3a26f;
+  opacity: 0.6;
 }
 
-.featuredSection {
-  position: relative;
-  z-index: 2;
-  background: #f8f3eb;
-  padding: 80px 40px 72px;
-  color: #1c1207;
-  max-width: 1300px;
-  margin: 0 auto;
-}
-
-.featuredHeading {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 36px;
-  flex-wrap: wrap;
-}
-
-.featuredLabel {
-  display: inline-block;
-  color: #a47d39;
-  font-family: 'Cinzel', serif;
-  font-size: 0.75rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-}
-
-.featuredTitle {
-  margin: 0;
-  font-size: clamp(2rem, 3vw, 2.8rem);
-  line-height: 1.05;
-  max-width: 700px;
-}
-
-.featuredButton {
-  appearance: none;
-  border: none;
-  background: #1a1510;
-  color: #f8f3eb;
-  padding: 16px 24px;
-  border-radius: 999px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  cursor: pointer;
-  transition: transform 0.2s ease, background 0.2s ease;
-}
-
-.featuredButton:hover {
-  transform: translateY(-2px);
-  background: #3e371e;
-}
-
-.featuredGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
-}
-
-.featuredCard {
-  background: #fff;
-  border-radius: 22px;
-  overflow: hidden;
-  border: 1px solid rgba(28, 18, 7, 0.08);
-  box-shadow: 0 18px 42px rgba(31, 19, 8, 0.08);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  cursor: pointer;
-}
-
-.featuredCard:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 26px 58px rgba(31, 19, 8, 0.16);
-}
-
-.featuredImage {
-  width: 100%;
-  height: 280px;
-  object-fit: cover;
-  display: block;
-}
-
-.featuredCardBody {
-  padding: 24px;
-}
-
-.featuredCardTag {
-  display: inline-block;
-  margin-bottom: 10px;
-  color: #9b792c;
-  font-size: 0.75rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-.featuredCardTitle {
-  margin: 0 0 12px;
-  font-size: 1.25rem;
-  line-height: 1.2;
-}
-
-.featuredCardDesc {
-  margin: 0;
-  color: #5a4d41;
-  line-height: 1.75;
-  font-size: 0.95rem;
-}
-
-/* ── RESPONSIVE ────────────────────────────────── */
+/* ── MEDIA QUERIES RESPONSIVENESS ───────────────────────── */
 @media (max-width: 960px) {
   .heroContent {
-    padding: 48px 24px 60px;
+    padding: 40px 24px 60px;
     justify-content: center;
   }
 
   .heroLeft {
     max-width: 100%;
+    align-items: center;
     text-align: center;
   }
 
-  .heroDesc { margin: 0 auto 28px; }
+  .heroDesc { margin-left: auto; margin-right: auto; }
   .heroMeta { justify-content: center; }
 }
 
 @media (max-width: 600px) {
-  .hero { min-height: 100svh; }
+  .hero { 
+    height: calc(100svh - 76px); /* Fixes mobile viewport safari shifts */
+  }
   .heroTitle { font-size: clamp(1.9rem, 7vw, 2.8rem); }
-  .heroCta { width: 100%; text-align: center; }
+  .heroCta { width: 100%; text-align: center; box-sizing: border-box; }
 }
