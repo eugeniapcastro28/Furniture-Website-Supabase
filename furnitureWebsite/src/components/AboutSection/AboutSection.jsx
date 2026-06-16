@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './AboutSection.module.css';
 
 const stats = [
@@ -9,10 +9,48 @@ const stats = [
 ];
 
 const AboutSection = () => {
+  const [visibleBlocks, setVisibleBlocks] = useState([]); // 🌟 Tracks scroll animated column blocks
+  const observerRef = useRef(null);
+
+  // ── INTERSECTION OBSERVER ANIMATION REVEALS ──────────────────────────────
+  useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined') {
+      return undefined;
+    }
+
+    const elements = document.querySelectorAll('[data-reveal-about-block]');
+
+    observerRef.current = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const blockName = entry.target.dataset.revealAboutBlock;
+          setVisibleBlocks((current) => (
+            current.includes(blockName) ? current : [...current, blockName]
+          ));
+          observerRef.current.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.1, // Matches the flawless entry timing profile from ProductsPage
+      rootMargin: '0px 0px -10px 0px'
+    });
+
+    elements.forEach((el) => observerRef.current.observe(el));
+
+    return () => {
+      observerRef.current?.disconnect();
+    };
+  }, []);
+
   return (
     <section id="about" className={styles.section}>
       <div className={styles.inner}>
-        <div className={styles.imageCol}>
+        
+        {/* ── IMAGE COLUMN REVEAL ── */}
+        <div 
+          data-reveal-about-block="image-column"
+          className={`${styles.imageCol} ${visibleBlocks.includes('image-column') ? styles.blockVisible : ''}`}
+        >
           <div className={styles.imageFrame}>
             <div className={styles.imageBg} />
             <div className={styles.imageCard}>
@@ -34,7 +72,11 @@ const AboutSection = () => {
           </div>
         </div>
 
-        <div className={styles.textCol}>
+        {/* ── TEXT COLUMN REVEAL ── */}
+        <div 
+          data-reveal-about-block="text-column"
+          className={`${styles.textCol} ${visibleBlocks.includes('text-column') ? styles.blockVisible : ''}`}
+        >
           <span className={styles.eyebrow}>Our Story</span>
           <h2 className={styles.title}>Crafted with Passion,<br />Built to Last</h2>
           <p className={styles.body}>
@@ -57,6 +99,7 @@ const AboutSection = () => {
             ))}
           </div>
         </div>
+
       </div>
     </section>
   );

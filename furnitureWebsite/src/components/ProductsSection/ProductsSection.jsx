@@ -1,10 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './ProductsSection.module.css';
 import { products, categories } from '../../data/products';
-import { HiArrowRight } from 'react-icons/hi'; // Clean arrow icon for the view-all call to action
+import { HiArrowRight } from 'react-icons/hi';
 
 const ProductsSection = ({ onSelectProduct, onViewAll }) => {
   const [activeCategory, setActiveCategory] = useState('all');
+  const [visibleCardIds, setVisibleCardIds] = useState([]);
+  const observer = useRef(null);
+
+  // ── INTERSECTION OBSERVER ANIMATION REVEALS (Mirrors ProductsPage) ────
+  useEffect(() => {
+    setVisibleCardIds([]);
+
+    if (typeof IntersectionObserver === 'undefined') {
+      return undefined;
+    }
+
+    const elements = document.querySelectorAll('[data-reveal-home-card]');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const id = entry.target.dataset.revealHomeCard;
+          setVisibleCardIds((current) => (
+            current.includes(id) ? current : [...current, id]
+          ));
+          io.unobserve(entry.target);
+        }
+      });
+    }, { 
+      threshold: 0.1, // Matches the flawless entry timing from ProductsPage
+      rootMargin: '0px 0px -10px 0px' 
+    });
+
+    elements.forEach((el) => io.observe(el));
+    observer.current = io;
+
+    return () => {
+      observer.current?.disconnect();
+      observer.current = null;
+    };
+  }, [activeCategory]);
 
   const filtered = activeCategory === 'all'
     ? products
@@ -44,7 +79,10 @@ const ProductsSection = ({ onSelectProduct, onViewAll }) => {
         {filtered.map((product, i) => (
           <div
             key={product.id}
-            className={`${styles.card} ${i === 0 ? styles.cardFeatured : ''}`}
+            data-reveal-home-card={product.id}
+            className={`${styles.card} ${i === 0 ? styles.cardFeatured : ''} ${
+              visibleCardIds.includes(product.id.toString()) ? styles.cardVisible : ''
+            }`}
             onClick={() => onSelectProduct(product)}
           >
             <div className={styles.imageWrap}>
@@ -67,7 +105,10 @@ const ProductsSection = ({ onSelectProduct, onViewAll }) => {
 
         {/* View All Products Action Card */}
         <div 
-          className={`${styles.card} ${styles.viewAllCard}`}
+          data-reveal-home-card="view-all-cta"
+          className={`${styles.card} ${styles.viewAllCard} ${
+            visibleCardIds.includes('view-all-cta') ? styles.cardVisible : ''
+          }`}
           onClick={() => onViewAll && onViewAll()}
         >
           <div className={styles.viewAllContent}>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './CategoriesSection.module.css';
 import { categories, products } from '../../data/products';
 
@@ -15,6 +15,38 @@ const categoryImages = {
 
 const CategoriesSection = () => {
   const [hovered, setHovered] = useState(null);
+  const [visibleCategoryIds, setVisibleCategoryIds] = useState([]); // 🌟 Tracks scroll animated entries
+  const observerRef = useRef(null);
+
+  // ── INTERSECTION OBSERVER ANIMATION REVEALS ──────────────────────────────
+  useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined') {
+      return undefined;
+    }
+
+    const elements = document.querySelectorAll('[data-reveal-category-card]');
+    
+    observerRef.current = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const id = entry.target.dataset.revealCategoryCard;
+          setVisibleCategoryIds((current) => (
+            current.includes(id) ? current : [...current, id]
+          ));
+          observerRef.current.unobserve(entry.target);
+        }
+      });
+    }, { 
+      threshold: 0.1, // Matches the perfect entry timing profile
+      rootMargin: '0px 0px -10px 0px' 
+    });
+
+    elements.forEach((el) => observerRef.current.observe(el));
+
+    return () => {
+      observerRef.current?.disconnect();
+    };
+  }, []);
 
   const enriched = categories.map(cat => ({
     ...cat,
@@ -35,7 +67,10 @@ const CategoriesSection = () => {
           <a
             key={cat.id}
             href="#products"
-            className={`${styles.card} ${i === 0 ? styles.cardTall : ''}`}
+            data-reveal-category-card={cat.id} // 🌟 Attach target node pointer data tags
+            className={`${styles.card} ${i === 0 ? styles.cardTall : ''} ${
+              visibleCategoryIds.includes(cat.id.toString()) ? styles.cardVisible : ''
+            }`}
             onMouseEnter={() => setHovered(cat.id)}
             onMouseLeave={() => setHovered(null)}
           >

@@ -1,9 +1,11 @@
+/* AboutSection.module.css */
+
 .section {
   width: 100%;
   background-color: #F6F5F1;
   padding: 96px 40px;
   box-sizing: border-box;
-  animation: fadeSlideUp 0.7s ease both;
+  /* 🌟 Removed global animation rule from container to prevent lag loops */
 }
 
 .inner {
@@ -14,9 +16,30 @@
   margin: 0 auto;
 }
 
-/* ── IMAGE COLUMN ───────────────────────────── */
-.imageCol {
+/* ── INITIAL LAYOUT TRANSITION BASES ─────────────────── */
+.imageCol,
+.textCol {
   flex: 1;
+  
+  /* 🌟 INITIAL STATE BOUNDS: Setup columns hidden, shifting safely down 28px */
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+/* 🌟 REVEAL CONTROLLER: Calls your perfect fadeSlideUp keyframe layout smoothly */
+.blockVisible {
+  opacity: 1;
+  transform: translateY(0);
+  animation: fadeSlideUp 0.7s ease both;
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── IMAGE COLUMN INTERNAL LAYOUTS ────────────────── */
+.imageCol {
   position: relative;
 }
 
@@ -79,11 +102,7 @@
   display: block;
 }
 
-/* ── TEXT COLUMN ────────────────────────────── */
-.textCol {
-  flex: 1;
-}
-
+/* ── TEXT COLUMN ELEMENTS ────────────────────────── */
 .eyebrow {
   display: inline-block;
   font-family: 'Cinzel', serif;
@@ -111,7 +130,7 @@
   margin-bottom: 16px;
 }
 
-/* ── STATS ──────────────────────────────────── */
+/* ── STATS ELEMENTS ──────────────────────────────── */
 .stats {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -141,7 +160,7 @@
   letter-spacing: 0.5px;
 }
 
-/* ── RESPONSIVE ─────────────────────────────── */
+/* ── RESPONSIVE ADAPTATIONS ────────────────────────── */
 @media (max-width: 960px) {
   .section { padding: 80px 24px; }
   .inner {

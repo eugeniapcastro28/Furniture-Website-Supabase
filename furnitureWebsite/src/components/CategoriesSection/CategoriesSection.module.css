@@ -3,7 +3,7 @@
   background-color: #1a1510;
   padding: 96px 40px;
   box-sizing: border-box;
-  animation: fadeSlideUp 0.7s ease both;
+  /* Remove section animation if you only want the cards inside to slide up individually */
 }
 
 /* ── HEADER ─────────────────────────────────── */
@@ -58,6 +58,10 @@
   display: block;
   text-decoration: none;
   aspect-ratio: 3 / 4;
+
+  /* 🌟 INITIAL STATE BOUNDS: Hidden until visible within the client viewport */
+  opacity: 0;
+  transform: translateY(28px);
 }
 
 .cardTall {
@@ -70,6 +74,17 @@
   object-fit: cover;
   display: block;
   transition: transform 0.6s ease;
+}
+
+.cardVisible {
+  opacity: 1;
+  transform: translateY(0);
+  animation: fadeSlideUp 0.7s ease both;
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .card:hover .cardImg {

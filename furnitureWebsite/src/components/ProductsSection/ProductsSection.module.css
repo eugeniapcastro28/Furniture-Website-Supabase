@@ -106,9 +106,29 @@
   border-radius: 16px;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Matches ProductsPage hover base */
   display: flex;
   flex-direction: column;
+  
+  /* Initial hidden state */
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+.cardVisible {
+  opacity: 1;
+  transform: translateY(0);
+  animation: fadeSlideUp 0.7s ease both; /* Uses the identical 0.7s ease keyframe profile */
+}
+
+.card.cardVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .card:hover {
@@ -426,7 +446,7 @@
 /* ── VIEW ALL CARD ──────────────────────────── */
 .viewAllCard {
   background-color: #ffffff;
-  border: 2px dashed rgba(107, 80, 39, 0.25); /* Elegant brand-colored dashed stroke */
+  border: 2px dashed rgba(107, 80, 39, 0.25);
   border-radius: 16px;
   display: flex;
   align-items: center;
@@ -435,12 +455,15 @@
   min-height: 100%;
   padding: 32px 24px;
   box-sizing: border-box;
+  
+  /* Inherits structural layout transitions */
   transition: transform 0.3s ease, border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* Ensures the view-all option acts in perfect harmony during keyframe calls */
 .viewAllCard:hover {
-  background-color: #faf9f6;
   border-color: #c3a26f;
+  background-color: #faf9f6;
   transform: translateY(-6px);
   box-shadow: 0 16px 48px rgba(107, 80, 39, 0.12);
 }
