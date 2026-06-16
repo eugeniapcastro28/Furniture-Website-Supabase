@@ -31,16 +31,31 @@ const App = () => {
     return () => { document.body.style.overflow = ''; };
   }, [selectedProduct]);
 
-  useLayoutEffect(() => {
-    const scrollContainer = document.querySelector('[data-scroll-container]');
+  const scrollPageToTop = () => {
+  const scrollContainer = document.querySelector('[data-scroll-container]');
+  
+  const execution = () => {
+    // 1. Force the custom layout container frame to top bounds
     if (scrollContainer) {
       scrollContainer.scrollTop = 0;
       scrollContainer.scrollLeft = 0;
-      scrollContainer.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     }
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    // 2. Force universal document fallback viewports
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
+  };
+
+    // Run instantly
+    execution();
+
+    // 🌟 FIX: Run a micro-tick later to override slower dynamic component DOM paint threads
+    setTimeout(execution, 0);
+  };
+
+  // Tracks view modifications instantly before the user sees the paint switch
+  useLayoutEffect(() => {
+    scrollPageToTop();
   }, [currentView]);
 
   if (isLoading) {

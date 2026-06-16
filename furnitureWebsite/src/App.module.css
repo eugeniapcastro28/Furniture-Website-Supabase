@@ -1,10 +1,17 @@
 .page {
+  /* Ensure it fits cleanly inside the viewport frame bounds */
+  height: 100vh; 
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  
+  /* Retain your scrolling architecture cleanly */
   overflow-y: auto;
   overflow-x: hidden;
   background-color: #F6F5F1;
+  
+  /* 🌟 ADD THIS: Ensures explicit scroll positioning changes apply instantly without animations fighting back */
+  scroll-behavior: auto !important; 
 }
 
 .page::-webkit-scrollbar {

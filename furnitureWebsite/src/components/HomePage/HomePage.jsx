@@ -27,6 +27,17 @@ const HomePage = () => {
     return undefined;
   }, [isTransitioning]);
 
+  useEffect(() => {
+    const scrollContainer = document.querySelector('[data-scroll-container]');
+    if (scrollContainer) {
+      scrollContainer.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      scrollContainer.scrollTop = 0;
+    }
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, []);
+
   const active = featuredProducts[activeIndex];
   const previous = featuredProducts[prevIndex];
 
