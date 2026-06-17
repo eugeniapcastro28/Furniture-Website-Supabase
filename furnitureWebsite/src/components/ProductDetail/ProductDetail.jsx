@@ -1,36 +1,32 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './ProductDetail.module.css';
-import { products } from '../../data/products';
 import ContactSection from '../ContactSection/ContactSection';
 
-const ProductDetail = ({ product, onClose, onSelectProduct }) => {
+// 🌟 Read live inventory via the new 'allProducts' prop assignment
+const ProductDetail = ({ product, allProducts, onClose, onSelectProduct }) => {
   const [activeImg, setActiveImg] = useState(0);
   const contactRef = useRef(null);
   const overlayRef = useRef(null);
 
-  // CRITICAL SMOOTH FIX: Glides back to top smoothly when product state changes
   useEffect(() => { 
     setActiveImg(0); 
-    
     if (overlayRef.current) {
-      overlayRef.current.scrollTo({
-        top: 0,
-        behavior: 'smooth' // Changed from instant to smooth
-      });
+      overlayRef.current.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [product]);
 
-  // Close on Escape key
   useEffect(() => {
     const handler = (e) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [onClose]);
 
-  const images = product.images?.length ? product.images : [product.image];
+  // Handle image fallbacks safely between database object configurations
+  const fallbackImage = product.image_url || product.image;
+  const images = product.images?.length ? product.images : [fallbackImage];
 
-  // Related: same category, not self, max 3
-  const related = products
+  // Related items check handles cloud database objects gracefully
+  const related = (allProducts || [])
     .filter(p => p.category === product.category && p.id !== product.id)
     .slice(0, 3);
 
@@ -42,8 +38,8 @@ const ProductDetail = ({ product, onClose, onSelectProduct }) => {
   return (
     <div ref={overlayRef} className={styles.overlay}>
       {/* ✨ KEY TRICK: Passing product.id as a 'key' to the page element 
-        forces React to re-trigger the CSS fade-in animation safely 
-        every single time the product changes.
+          forces React to re-trigger the CSS fade-in animation safely 
+          every single time the product changes.
       */}
       <div className={styles.page} key={product.id}>
 
@@ -69,14 +65,10 @@ const ProductDetail = ({ product, onClose, onSelectProduct }) => {
             </div>
 
             <div className={styles.mainImgWrap}>
-              <picture>
-                {product.imagesWebp?.[activeImg] && <source type="image/webp" srcSet={product.imagesWebp[activeImg]} />}
-                {activeImg === 0 && product.imageWebp && !product.imagesWebp?.[0] && (
-                  <source type="image/webp" srcSet={product.imageWebp} />
-                )}
+              {images[activeImg] || fallbackImage ? (
                 <img
                   key={activeImg}
-                  src={images[activeImg]}
+                  src={images[activeImg] || fallbackImage}
                   alt={`${product.name} view ${activeImg + 1}`}
                   className={styles.mainImg}
                   loading="eager"
@@ -84,25 +76,35 @@ const ProductDetail = ({ product, onClose, onSelectProduct }) => {
                   width={product.imageWidth}
                   height={product.imageHeight}
                 />
-              </picture>
+              ) : (
+                <div className={styles.noImagePlaceholder}>No Image Available</div>
+              )}
               {product.tag && <span className={styles.tag}>{product.tag}</span>}
             </div>
+            
             {!product.inStock && <span className={styles.outOfStockBadge}>Out of Stock</span>}
-            {images.length > 1 && (
+            
+            {images.length > 1 && images[0] !== undefined && (
               <div className={styles.thumbRow}>
-                {images.map((src, idx) => (
-                  <button
-                    key={idx}
-                    className={`${styles.thumb} ${idx === activeImg ? styles.thumbActive : ''}`}
-                    onClick={() => setActiveImg(idx)}
-                    aria-label={`View image ${idx + 1}`}
-                  >
-                    <picture>
-                      {product.imagesWebp?.[idx] && <source type="image/webp" srcSet={product.imagesWebp[idx]} />}
-                      <img src={src} alt="" className={styles.thumbImg} width="72" height="72" />
-                    </picture>
-                  </button>
-                ))}
+                {images.map((src, idx) => {
+                  if (!src) return null;
+                  return (
+                    <button
+                      key={idx}
+                      className={`${styles.thumb} ${idx === activeImg ? styles.thumbActive : ''}`}
+                      onClick={() => setActiveImg(idx)}
+                      aria-label={`View image ${idx + 1}`}
+                    >
+                      <img 
+                        src={src} 
+                        alt="" 
+                        className={styles.thumbImg} 
+                        width="72" 
+                        height="72" 
+                      />
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -205,18 +207,19 @@ const ProductDetail = ({ product, onClose, onSelectProduct }) => {
 };
 
 /* ── Related Card ── */
-const RelatedCard = ({ product, onSelect }) => (
-  <button
-    className={styles.relatedCard}
-    onClick={() => onSelect(product)}
-    type="button"
-    aria-label={`View details for ${product.name}`}
-  >
-    <div className={styles.relatedImgWrap}>
-      <picture>
-        {product.imageWebp && <source type="image/webp" srcSet={product.imageWebp} />}
+const RelatedCard = ({ product, onSelect }) => {
+  const cardImg = product.image_url || product.images?.[0] || product.image;
+
+  return (
+    <button
+      className={styles.relatedCard}
+      onClick={() => onSelect(product)}
+      type="button"
+      aria-label={`View details for ${product.name}`}
+    >
+      <div className={styles.relatedImgWrap}>
         <img
-          src={product.images?.[0] || product.image}
+          src={cardImg}
           alt={product.name}
           className={styles.relatedImg}
           width={product.imageWidth}
@@ -224,17 +227,17 @@ const RelatedCard = ({ product, onSelect }) => (
           loading="lazy"
           decoding="async"
         />
-      </picture>
-      <div className={styles.relatedOverlay}>
-        <span className={styles.relatedViewBtn}>View Details</span>
+        <div className={styles.relatedOverlay}>
+          <span className={styles.relatedViewBtn}>View Details</span>
+        </div>
       </div>
-    </div>
-    <div className={styles.relatedBody}>
-      <span className={styles.relatedCategory}>{product.category}</span>
-      <h3 className={styles.relatedName}>{product.name}</h3>
-      {product.price && <p className={styles.relatedPrice}>{product.price}</p>}
-    </div>
-  </button>
-);
+      <div className={styles.relatedBody}>
+        <span className={styles.relatedCategory}>{product.category}</span>
+        <h3 className={styles.relatedName}>{product.name}</h3>
+        {product.price && <p className={styles.relatedPrice}>{product.price}</p>}
+      </div>
+    </button>
+  );
+};
 
 export default ProductDetail;

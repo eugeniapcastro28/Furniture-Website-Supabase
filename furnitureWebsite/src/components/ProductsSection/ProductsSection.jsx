@@ -1,15 +1,41 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './ProductsSection.module.css';
-import { products, categories } from '../../data/products';
+import { categories } from '../../data/products'; // Keep static categories if desired
+import { supabase } from '../../config/supabaseClient'; // 🌟 Import your client configuration
 import { HiArrowRight } from 'react-icons/hi';
 
 const ProductsSection = ({ onSelectProduct, onViewAll }) => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [visibleCardIds, setVisibleCardIds] = useState([]);
+  const [products, setProducts] = useState([]); // 🌟 Dynamic product state
+  const [loading, setLoading] = useState(true); // 🌟 Loading status management
   const observer = useRef(null);
 
-  // ── INTERSECTION OBSERVER ANIMATION REVEALS (Mirrors ProductsPage) ────
+  // ── 1. LIVE DATABASE DATA FETCH ────────────────────────────────────
   useEffect(() => {
+    const fetchLiveInventory = async () => {
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .order('created_at', { ascending: false }); // Newest uploads appear first
+
+        if (error) throw error;
+        setProducts(data || []);
+      } catch (error) {
+        console.error('Error loading inventory data:', error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLiveInventory();
+  }, []);
+
+  // ── 2. INTERSECTION OBSERVER ANIMATION REVEALS ─────────────────────
+  useEffect(() => {
+    if (loading) return; // Prevent observer from running if elements aren't painted yet
     setVisibleCardIds([]);
 
     if (typeof IntersectionObserver === 'undefined') {
@@ -28,7 +54,7 @@ const ProductsSection = ({ onSelectProduct, onViewAll }) => {
         }
       });
     }, { 
-      threshold: 0.1, // Matches the flawless entry timing from ProductsPage
+      threshold: 0.1, 
       rootMargin: '0px 0px -10px 0px' 
     });
 
@@ -39,11 +65,19 @@ const ProductsSection = ({ onSelectProduct, onViewAll }) => {
       observer.current?.disconnect();
       observer.current = null;
     };
-  }, [activeCategory]);
+  }, [activeCategory, loading]); // Added loading dependency to re-trigger observer securely
 
   const filtered = activeCategory === 'all'
     ? products
     : products.filter(p => p.category === activeCategory);
+
+  if (loading) {
+    return (
+      <section className={styles.section} style={{ display: 'flex', justifyContent: 'center', padding: '100px 0' }}>
+        <div style={{ color: '#c3a26f', fontSize: '1.2rem', letterSpacing: '1px' }}>Loading artisan inventory...</div>
+      </section>
+    );
+  }
 
   return (
     <section id="products" className={styles.section}>
@@ -86,7 +120,8 @@ const ProductsSection = ({ onSelectProduct, onViewAll }) => {
             onClick={() => onSelectProduct(product)}
           >
             <div className={styles.imageWrap}>
-              <img src={product.image} alt={product.name} loading="lazy" className={styles.cardImg} />
+              {/* 🌟 Updated src to read product.image_url pointing to Supabase bucket storage */}
+              <img src={product.image_url} alt={product.name} loading="lazy" className={styles.cardImg} />
               <div className={styles.cardOverlay}>
                 <span className={styles.viewBtn}>View Details</span>
               </div>
@@ -97,7 +132,8 @@ const ProductsSection = ({ onSelectProduct, onViewAll }) => {
               <h3 className={styles.cardName}>{product.name}</h3>
               <p className={styles.cardDesc}>{product.description}</p>
               <div className={styles.cardMeta}>
-                <span>{product.material}</span>
+                {/* Fallback values displayed cleanly if field parameter variations are omitted */}
+                <span>₱{product.price?.toLocaleString()}</span>
               </div>
             </div>
           </div>

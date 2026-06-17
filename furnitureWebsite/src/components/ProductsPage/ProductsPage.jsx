@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import styles from './ProductsPage.module.css';
-import { products, categories } from '../../data/products';
+import { categories } from '../../data/products';
 
-const ProductsPage = ({ onSelectProduct, onBack }) => {
+const ProductsPage = ({ products, onSelectProduct, onBack }) => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [visibleProductIds, setVisibleProductIds] = useState([]);
   const observer = useRef(null);
-
+  
   // ── FOOLPROOF VIEWPORT TOP SNAP RESET ──────────────────────────────────────
   useEffect(() => {
     // Target the specialized parent layout node frame container
