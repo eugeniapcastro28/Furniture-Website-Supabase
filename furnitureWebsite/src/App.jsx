@@ -28,6 +28,7 @@ const App = () => {
     try {
       const { data, error } = await supabase
         .from('products')
+        .select('*')   
         .order('created_at', { ascending: false });
         
       if (error) throw error;
@@ -38,8 +39,7 @@ const App = () => {
         // Fallbacks keep older fields stable if missing in specific rows
         image: item.image_url, 
         images: [item.image_url],
-        inStock: item.inStock !== undefined ? item.inStock : true,
-        price: typeof item.price === 'number' ? `₱${item.price.toLocaleString()}` : item.price
+        inStock: item.inStock !== undefined ? item.inStock : true
       }));
 
       setDbProducts(formattedData);

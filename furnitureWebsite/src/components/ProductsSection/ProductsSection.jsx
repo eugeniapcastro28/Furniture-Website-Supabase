@@ -1,25 +1,28 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './ProductsSection.module.css';
-import { categories } from '../../data/products'; // Keep static categories if desired
-import { supabase } from '../../config/supabaseClient'; // 🌟 Import your client configuration
+import { categories } from '../../data/products'; 
+import { supabase } from '../../config/supabaseClient'; 
 import { HiArrowRight } from 'react-icons/hi';
 
 const ProductsSection = ({ onSelectProduct, onViewAll }) => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [visibleCardIds, setVisibleCardIds] = useState([]);
-  const [products, setProducts] = useState([]); // 🌟 Dynamic product state
-  const [loading, setLoading] = useState(true); // 🌟 Loading status management
+  const [products, setProducts] = useState([]); 
+  const [loading, setLoading] = useState(true); 
   const observer = useRef(null);
 
-  // ── 1. LIVE DATABASE DATA FETCH ────────────────────────────────────
   useEffect(() => {
     const fetchLiveInventory = async () => {
       try {
         setLoading(true);
+        // Fetch featured items. We omit the rigid limit here so switching tabs has access 
+        // to other featured items, then clamp strictly down to 7 on the layout grid.
         const { data, error } = await supabase
           .from('products')
           .select('*')
-          .order('created_at', { ascending: false }); // Newest uploads appear first
+          .eq('featured', true)
+          .order('display_order', { ascending: true })   
+          .order('created_at', { ascending: false });      
 
         if (error) throw error;
         setProducts(data || []);
@@ -33,9 +36,8 @@ const ProductsSection = ({ onSelectProduct, onViewAll }) => {
     fetchLiveInventory();
   }, []);
 
-  // ── 2. INTERSECTION OBSERVER ANIMATION REVEALS ─────────────────────
   useEffect(() => {
-    if (loading) return; // Prevent observer from running if elements aren't painted yet
+    if (loading) return; 
     setVisibleCardIds([]);
 
     if (typeof IntersectionObserver === 'undefined') {
@@ -65,11 +67,13 @@ const ProductsSection = ({ onSelectProduct, onViewAll }) => {
       observer.current?.disconnect();
       observer.current = null;
     };
-  }, [activeCategory, loading]); // Added loading dependency to re-trigger observer securely
+  }, [activeCategory, loading]); 
 
-  const filtered = activeCategory === 'all'
+  // 🌟 Filter first, then slice up to exactly 7 items max for the Homepage display
+  const filteredFeatured = (activeCategory === 'all'
     ? products
-    : products.filter(p => p.category === activeCategory);
+    : products.filter(p => p.category === activeCategory)
+  ).slice(0, 7);
 
   if (loading) {
     return (
@@ -89,7 +93,6 @@ const ProductsSection = ({ onSelectProduct, onViewAll }) => {
         </p>
       </div>
 
-      {/* Filter Tabs */}
       <div className={styles.filters}>
         <button
           className={`${styles.filterBtn} ${activeCategory === 'all' ? styles.filterActive : ''}`}
@@ -108,36 +111,36 @@ const ProductsSection = ({ onSelectProduct, onViewAll }) => {
         ))}
       </div>
 
-      {/* Products Grid */}
       <div className={styles.grid}>
-        {filtered.map((product, i) => (
-          <div
-            key={product.id}
-            data-reveal-home-card={product.id}
-            className={`${styles.card} ${i === 0 ? styles.cardFeatured : ''} ${
-              visibleCardIds.includes(product.id.toString()) ? styles.cardVisible : ''
-            }`}
-            onClick={() => onSelectProduct(product)}
-          >
-            <div className={styles.imageWrap}>
-              {/* 🌟 Updated src to read product.image_url pointing to Supabase bucket storage */}
-              <img src={product.image_url} alt={product.name} loading="lazy" className={styles.cardImg} />
-              <div className={styles.cardOverlay}>
-                <span className={styles.viewBtn}>View Details</span>
+        {filteredFeatured.map((product, i) => {
+          const displayImg = Array.isArray(product.image_url) ? product.image_url[0] : product.image_url;
+          return (
+            <div
+              key={product.id}
+              data-reveal-home-card={product.id}
+              className={`${styles.card} ${i === 0 ? styles.cardFeatured : ''} ${
+                visibleCardIds.includes(product.id.toString()) ? styles.cardVisible : ''
+              }`}
+              onClick={() => onSelectProduct(product)}
+            >
+              <div className={styles.imageWrap}>
+                <img src={displayImg} alt={product.name} loading="lazy" className={styles.cardImg} />
+                <div className={styles.cardOverlay}>
+                  <span className={styles.viewBtn}>View Details</span>
+                </div>
+                {product.tag && <span className={styles.tag}>{product.tag}</span>}
               </div>
-              {product.tag && <span className={styles.tag}>{product.tag}</span>}
-            </div>
-            <div className={styles.cardBody}>
-              <span className={styles.cardCategory}>{product.category}</span>
-              <h3 className={styles.cardName}>{product.name}</h3>
-              <p className={styles.cardDesc}>{product.description}</p>
-              <div className={styles.cardMeta}>
-                {/* Fallback values displayed cleanly if field parameter variations are omitted */}
-                <span>₱{product.price?.toLocaleString()}</span>
+              <div className={styles.cardBody}>
+                <span className={styles.cardCategory}>{product.category}</span>
+                <h3 className={styles.cardName}>{product.name}</h3>
+                <p className={styles.cardDesc}>{product.description}</p>
+                <div className={styles.cardMeta}>
+                  <span>₱{product.price?.toLocaleString()}</span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         {/* View All Products Action Card */}
         <div 

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import styles from './ProductDetail.module.css';
 import ContactSection from '../ContactSection/ContactSection';
 
-// 🌟 Read live inventory via the new 'allProducts' prop assignment
 const ProductDetail = ({ product, allProducts, onClose, onSelectProduct }) => {
   const [activeImg, setActiveImg] = useState(0);
   const contactRef = useRef(null);
@@ -21,14 +20,42 @@ const ProductDetail = ({ product, allProducts, onClose, onSelectProduct }) => {
     return () => window.removeEventListener('keydown', handler);
   }, [onClose]);
 
-  // Handle image fallbacks safely between database object configurations
-  const fallbackImage = product.image_url || product.image;
-  const images = product.images?.length ? product.images : [fallbackImage];
+  // 🌟 MULTI-IMAGE RESOLUTION LAYER
+  const images = Array.isArray(product.image_url)
+    ? product.image_url
+    : product.image_url 
+    ? [product.image_url]
+    : product.images?.length 
+    ? product.images 
+    : [product.image];
 
-  // Related items check handles cloud database objects gracefully
-  const related = (allProducts || [])
-    .filter(p => p.category === product.category && p.id !== product.id)
-    .slice(0, 3);
+  const fallbackImage = images[0] || '';
+
+  // 🌟 SAFE STOCK STATUS RESOLUTION
+  const isOutOfStock = product.in_stock === false || product.inStock === false;
+
+  // 🌟 ROBUST RELATED ITEMS LAYER (Matches seamlessly via 'category')
+  const fallbackRelated = React.useMemo(() => {
+    const pool = allProducts || [];
+    if (!product) return [];
+
+    const currentId = String(product.id);
+    const currentCategory = String(product.category || '').toLowerCase().trim();
+
+    // 1. Filter items belonging to the exact same category
+    let matches = pool.filter(p => {
+      const itemCategory = String(p.category || '').toLowerCase().trim();
+      const itemId = String(p.id);
+      return itemCategory === currentCategory && itemId !== currentId;
+    });
+
+    // 2. Safe Fallback: If no other items share this category, display alternative options from pool
+    if (matches.length === 0) {
+      matches = pool.filter(p => String(p.id) !== currentId);
+    }
+
+    return matches.slice(0, 3);
+  }, [allProducts, product]);
 
   const scrollToContact = (e) => {
     e.preventDefault();
@@ -37,10 +64,6 @@ const ProductDetail = ({ product, allProducts, onClose, onSelectProduct }) => {
 
   return (
     <div ref={overlayRef} className={styles.overlay}>
-      {/* ✨ KEY TRICK: Passing product.id as a 'key' to the page element 
-          forces React to re-trigger the CSS fade-in animation safely 
-          every single time the product changes.
-      */}
       <div className={styles.page} key={product.id}>
 
         {/* ── Top Bar / Breadcrumbs ─────────────────── */}
@@ -70,7 +93,7 @@ const ProductDetail = ({ product, allProducts, onClose, onSelectProduct }) => {
                   key={activeImg}
                   src={images[activeImg] || fallbackImage}
                   alt={`${product.name} view ${activeImg + 1}`}
-                  className={styles.mainImg}
+                  className={`${styles.mainImg} ${isOutOfStock ? styles.outOfStockImgDim : ''}`}
                   loading="eager"
                   decoding="async"
                   width={product.imageWidth}
@@ -80,9 +103,14 @@ const ProductDetail = ({ product, allProducts, onClose, onSelectProduct }) => {
                 <div className={styles.noImagePlaceholder}>No Image Available</div>
               )}
               {product.tag && <span className={styles.tag}>{product.tag}</span>}
+              
+              {/* POSITIONED OUT OF STOCK BADGE */}
+              {isOutOfStock && (
+                <span className={styles.outOfStockBadge}>
+                  Temporarily Out of Stock
+                </span>
+              )}
             </div>
-            
-            {!product.inStock && <span className={styles.outOfStockBadge}>Out of Stock</span>}
             
             {images.length > 1 && images[0] !== undefined && (
               <div className={styles.thumbRow}>
@@ -114,7 +142,11 @@ const ProductDetail = ({ product, allProducts, onClose, onSelectProduct }) => {
             <div className={styles.stickyHeader}>
               <span className={styles.category}>{product.category}</span>
               <h1 className={styles.name}>{product.name}</h1>
-              {product.price && <p className={styles.price}>{product.price}</p>}
+              {product.price && (
+                <p className={styles.price}>
+                  ₱{typeof product.price === 'number' ? product.price.toLocaleString() : product.price.replace('₱', '')}
+                </p>
+              )}
             </div>
 
             <div className={styles.scrollableContent}>
@@ -125,20 +157,23 @@ const ProductDetail = ({ product, allProducts, onClose, onSelectProduct }) => {
                 <h2 className={styles.blockTitle}>Specifications</h2>
                 <div className={styles.specsGrid}>
                   {[
-                    ['Material',   product.material],
-                    ['Dimensions', product.dimensions],
-                    ['Weight',     product.weight],
-                    ['Finish',     product.finish],
-                    ['Color',      product.color],
-                    ['Origin',     product.origin],
-                    ['Lead Time',  product.leadTime],
-                    ['Warranty',   product.warranty],
+                    ['Availability', isOutOfStock ? 'Temporarily Out of Stock' : 'Available / Made to Order'],
+                    ['Material',     product.material],
+                    ['Dimensions',   product.dimensions],
+                    ['Weight',       product.weight],
+                    ['Finish',       product.finish],
+                    ['Color',        product.color],
+                    ['Origin',       product.origin],
+                    ['Lead Time',    product.lead_time || product.leadTime],
+                    ['Warranty',     product.warranty],
                   ]
                     .filter(([, val]) => val)
                     .map(([label, val]) => (
                       <div key={label} className={styles.specItem}>
                         <span className={styles.specLabel}>{label}</span>
-                        <span className={styles.specValue}>{val}</span>
+                        <span className={`${styles.specValue} ${label === 'Availability' && isOutOfStock ? styles.outOfStockText : ''}`}>
+                          {val}
+                        </span>
                       </div>
                     ))}
                 </div>
@@ -166,8 +201,12 @@ const ProductDetail = ({ product, allProducts, onClose, onSelectProduct }) => {
 
               {/* CTA Row */}
               <div className={styles.ctaRow}>
-                <a href="#contact" className={styles.inquireBtn} onClick={scrollToContact}>
-                  Inquire About This Piece
+                <a 
+                  href="#contact" 
+                  className={`${styles.inquireBtn} ${isOutOfStock ? styles.outOfStockBtn : ''}`} 
+                  onClick={scrollToContact}
+                >
+                  {isOutOfStock ? 'Inquire for Next Batch / Restock' : 'Inquire About This Piece'}
                 </a>
                 <button
                   className={styles.shareBtn}
@@ -180,12 +219,12 @@ const ProductDetail = ({ product, allProducts, onClose, onSelectProduct }) => {
           </div>
         </div>
 
-        {/* ── Related Products ─────────────────────── */}
-        {related.length > 0 && (
+        {/* ── Related Products Row (Mapped to standard Category values) ── */}
+        {fallbackRelated.length > 0 && (
           <div className={styles.related}>
             <h2 className={styles.relatedTitle}>You May Also Like</h2>
             <div className={styles.relatedGrid}>
-              {related.map(p => (
+              {fallbackRelated.map(p => (
                 <RelatedCard
                   key={p.id}
                   product={p}
@@ -208,7 +247,10 @@ const ProductDetail = ({ product, allProducts, onClose, onSelectProduct }) => {
 
 /* ── Related Card ── */
 const RelatedCard = ({ product, onSelect }) => {
-  const cardImg = product.image_url || product.images?.[0] || product.image;
+  // Resolve image source dynamically
+  const cardImg = Array.isArray(product.image_url) 
+    ? product.image_url[0] 
+    : product.image_url || product.images?.[0] || product.image;
 
   return (
     <button
@@ -218,23 +260,32 @@ const RelatedCard = ({ product, onSelect }) => {
       aria-label={`View details for ${product.name}`}
     >
       <div className={styles.relatedImgWrap}>
-        <img
-          src={cardImg}
-          alt={product.name}
-          className={styles.relatedImg}
-          width={product.imageWidth}
-          height={product.imageHeight}
-          loading="lazy"
-          decoding="async"
-        />
+        {cardImg ? (
+          <img
+            src={cardImg}
+            alt={product.name}
+            className={styles.relatedImg}
+            loading="lazy"
+            decoding="async" 
+          />
+        ) : (
+          <div className={styles.noImagePlaceholderMini}>No Image</div>
+        )}
         <div className={styles.relatedOverlay}>
           <span className={styles.relatedViewBtn}>View Details</span>
         </div>
       </div>
+      
       <div className={styles.relatedBody}>
         <span className={styles.relatedCategory}>{product.category}</span>
         <h3 className={styles.relatedName}>{product.name}</h3>
-        {product.price && <p className={styles.relatedPrice}>{product.price}</p>}
+        {product.price && (
+          <p className={styles.relatedPrice}>
+            ₱{typeof product.price === 'number' 
+              ? product.price.toLocaleString() 
+              : product.price.replace('₱', '')}
+          </p>
+        )}
       </div>
     </button>
   );
