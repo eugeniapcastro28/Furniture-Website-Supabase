@@ -176,3 +176,127 @@
   from { opacity: 0; transform: translateY(-8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* --- Add these styles to your existing CSS file --- */
+
+.navItemWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.hasDropdown {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.chevronIcon {
+  font-size: 0.85rem;
+  transition: transform 0.2s ease;
+}
+
+/* Rotate Chevron on Hover context matching state */
+.navItemWrapper:hover .chevronIcon {
+  transform: rotate(180deg);
+  color: #c3a26f;
+}
+
+/* 1. DESKTOP DROPDOWN CONTAINER */
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background-color: rgba(246, 245, 241, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(195, 162, 111, 0.2);
+  border-radius: 4px;
+  min-width: 160px;
+  box-shadow: 0 10px 25px rgba(107, 80, 39, 0.08);
+  padding: 8px 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 10000;
+  animation: dropdownFadeIn 0.2s ease forwards;
+}
+
+.dropdownItem {
+  text-decoration: none;
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #4a3b28;
+  padding: 10px 20px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+}
+
+.dropdownItem:hover {
+  background-color: rgba(195, 162, 111, 0.1);
+  color: #c3a26f;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(12px); /* Start a bit lower */
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0px);  /* Sit flush right under the link */
+  }
+}
+
+/* 2. RESPONSIVE MOBILE ACCORDION OVERRIDES */
+@media (max-width: 1050px) {
+  .navItemWrapper {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .hasDropdown {
+    justify-content: center;
+  }
+
+  .dropdownMenu.mobileDropdown {
+    position: relative;
+    left: 0;
+    transform: none;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    width: 100%;
+    animation: none;
+    display: flex;
+    gap: 0;
+  }
+
+  .dropdownMenu.mobileDropdown .dropdownItem {
+    padding: 12px 0;
+    text-align: center;
+    background: rgba(195, 162, 111, 0.03);
+    border-bottom: 1px solid rgba(195, 162, 111, 0.05);
+    font-size: 0.7rem;
+    color: #6b5027;
+  }
+  
+  .dropdownMenu.mobileDropdown .dropdownItem:last-child {
+    border-bottom: none;
+  }
+}
+.dropdownMenu::before {
+  content: '';
+  position: absolute;
+  top: -20px;       /* Reaches up to bridge the empty gap */
+  left: 0;
+  width: 100%;
+  height: 20px;     /* Covers the zone between the nav bar and the menu */
+  background: transparent; /* Invisible to the eye, but catches the mouse pointer */
+}

@@ -77,7 +77,7 @@ const ProductsSection = ({ onSelectProduct, onViewAll }) => {
 
   if (loading) {
     return (
-      <section className={styles.section} style={{ display: 'flex', justifyContent: 'center', padding: '100px 0' }}>
+      <section id="products" className={styles.section} style={{ display: 'flex', justifyContent: 'center', padding: '100px 0' }}>
         <div style={{ color: '#c3a26f', fontSize: '1.2rem', letterSpacing: '1px' }}>Loading artisan inventory...</div>
       </section>
     );

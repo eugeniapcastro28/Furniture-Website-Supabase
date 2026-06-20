@@ -13,12 +13,12 @@ const categoryImages = {
   outdoor: img1,
 };
 
-const CategoriesSection = () => {
+// FIX 1: Pass down onNavigate and optionally onSetCategory as props
+const CategoriesSection = ({ onNavigate, onSetCategory }) => {
   const [hovered, setHovered] = useState(null);
-  const [visibleCategoryIds, setVisibleCategoryIds] = useState([]); // 🌟 Tracks scroll animated entries
+  const [visibleCategoryIds, setVisibleCategoryIds] = useState([]); 
   const observerRef = useRef(null);
 
-  // ── INTERSECTION OBSERVER ANIMATION REVEALS ──────────────────────────────
   useEffect(() => {
     if (typeof IntersectionObserver === 'undefined') {
       return undefined;
@@ -37,7 +37,7 @@ const CategoriesSection = () => {
         }
       });
     }, { 
-      threshold: 0.1, // Matches the perfect entry timing profile
+      threshold: 0.1, 
       rootMargin: '0px 0px -10px 0px' 
     });
 
@@ -47,6 +47,21 @@ const CategoriesSection = () => {
       observerRef.current?.disconnect();
     };
   }, []);
+
+  // FIX 2: Handle the card click gracefully without letting the browser native anchor hijack it
+  const handleCategoryClick = (categoryId, event) => {
+    event.preventDefault(); // Stop native layout anchor jumping
+    
+    // Optional: If your products page accepts a filter state, update it here
+    if (onSetCategory) {
+      onSetCategory(categoryId);
+    }
+
+    // Trigger the clean page switch view mechanism
+    if (onNavigate) {
+      onNavigate('products');
+    }
+  };
 
   const enriched = categories.map(cat => ({
     ...cat,
@@ -67,10 +82,12 @@ const CategoriesSection = () => {
           <a
             key={cat.id}
             href="#products"
-            data-reveal-category-card={cat.id} // 🌟 Attach target node pointer data tags
+            data-reveal-category-card={cat.id} 
             className={`${styles.card} ${i === 0 ? styles.cardTall : ''} ${
               visibleCategoryIds.includes(cat.id.toString()) ? styles.cardVisible : ''
             }`}
+            // FIX 3: Attach the click handler to cleanly process the transition context
+            onClick={(event) => handleCategoryClick(cat.id, event)}
             onMouseEnter={() => setHovered(cat.id)}
             onMouseLeave={() => setHovered(null)}
           >

@@ -121,7 +121,7 @@ const App = () => {
         onNavigate={setCurrentView} 
         onClearProduct={() => setSelectedProduct(null)}
       />
-      <main style={{ paddingTop: '76px' }}>
+      <main>
         {currentView === 'home' ? (
           <>
             <HomePage />

@@ -2,22 +2,60 @@ import React, { useState, useEffect, useRef } from 'react';
 import styles from './TopBar.module.css';
 import logo from '../../assets/No Name.png';
 import mobileLogo from '../../assets/LOGO.webp';
-import { HiMenuAlt3, HiX } from 'react-icons/hi';
+import { HiMenuAlt3, HiX, HiChevronDown } from 'react-icons/hi';
 
+// 1. Restructured navLinks configuration to support sub-dropdown links
 const navLinks = [
   { href: '#home', label: 'Home', page: 'home' },
-  { href: '#products', label: 'Products', page: 'products' },
+  { 
+    href: '#products', 
+    label: 'Products', 
+    page: 'products',
+    dropdown: [
+      // 1. All Products -> Goes to the full independent ProductsPage view
+      { href: '#products', label: 'All Products', page: 'products' }, 
+      // 2. Our Collections -> Stays/Goes to HomePage and scrolls to ProductsSection
+      { href: '#products', label: 'Our Collections', page: 'home' }  
+    ]
+  },
   { href: '#categories', label: 'Categories', page: 'home' },
   { href: '#about', label: 'About', page: 'home' },
   { href: '#contact', label: 'Contact', page: 'home' },
 ];
+
+// Polls for an element to exist in the DOM (and be laid out) before resolving.
+// This replaces the old fixed setTimeout(50) guess, which raced against
+// HomePage actually mounting/unmounting its sections when navigating
+// from the Products page back to Home.
+const waitForElement = (selector, { timeout = 1500, interval = 30 } = {}) => {
+  return new Promise((resolve) => {
+    const start = performance.now();
+
+    const tick = () => {
+      const el = document.querySelector(selector);
+      if (el) {
+        resolve(el);
+        return;
+      }
+      if (performance.now() - start >= timeout) {
+        resolve(null); // give up gracefully, don't throw
+        return;
+      }
+      requestAnimationFrame(() => setTimeout(tick, interval));
+    };
+
+    tick();
+  });
+};
 
 const TopBar = ({ currentPage = 'home', onNavigate, onClearProduct }) => {
   const [activeLink, setActiveLink] = useState('#home');
   const [isMobile, setIsMobile] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(null); // Track hovered item on desktop
   const menuRef = useRef(null);
+  const pendingScrollRef = useRef(null); // Tracks an in-flight scroll request so stale ones can be ignored
 
   useEffect(() => {
     const handleResize = () => {
@@ -30,51 +68,83 @@ const TopBar = ({ currentPage = 'home', onNavigate, onClearProduct }) => {
   }, []);
 
   useEffect(() => {
-    const scrollTarget = document.querySelector('[data-scroll-container]') || document.documentElement;
-    const getScrollY = () =>
-      scrollTarget === document.documentElement ? window.scrollY : scrollTarget.scrollTop;
+  const header = menuRef.current;
+  if (!header) return;
 
-    const handleScroll = () => setIsScrolled(getScrollY() > 40);
-    const target = scrollTarget === document.documentElement ? window : scrollTarget;
-    target.addEventListener('scroll', handleScroll, { passive: true });
-    return () => target.removeEventListener('scroll', handleScroll);
-  }, []);
+  const updateHeaderHeight = () => {
+    document.documentElement.style.setProperty('--header-height', `${header.offsetHeight}px`);
+  };
 
-  // Intersection Observer for dynamic active link highlighting based on scroll
-  useEffect(() => {
-    if (currentPage !== 'home') return undefined;
+  updateHeaderHeight();
+  const resizeObserver = new ResizeObserver(updateHeaderHeight);
+  resizeObserver.observe(header);
 
-    const observerOptions = {
-      root: null,
-      rootMargin: '-50% 0px -50% 0px',
-      threshold: 0,
-    };
+  return () => resizeObserver.disconnect();
+}, []);
 
-    const observerCallback = (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const sectionId = `#${entry.target.id}`;
-          setActiveLink(sectionId);
-        }
-      });
-    };
+ useEffect(() => {
+  const handleScroll = () => {
+    // If the browser scrolls down more than 40px, trigger the navbar styling shift
+    setIsScrolled(window.scrollY > 40);
+  };
 
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
-    const sections = document.querySelectorAll('[id]');
-    sections.forEach((section) => {
-      if (navLinks.some((link) => link.href === `#${section.id}`)) {
-        observer.observe(section);
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  return () => window.removeEventListener('scroll', handleScroll);
+}, []);
+
+// Replace your Intersection Observer useEffect block with this exact setup:
+useEffect(() => {
+  if (currentPage !== 'home') return undefined;
+
+  // FIX: Explicitly target the root browser viewport screen
+  const observerOptions = {
+    root: null, 
+    rootMargin: '-50% 0px -50% 0px',
+    threshold: 0,
+  };
+
+  const observerCallback = (entries) => {
+    entries.forEach((entry) => {
+      if (
+        entry.isIntersecting &&
+        document.getElementById('products-page') === null &&
+        !pendingScrollRef.current
+      ) {
+        const sectionId = `#${entry.target.id}`;
+        setActiveLink(sectionId);
       }
     });
+  };
 
-    return () => observer.disconnect();
-  }, [currentPage]);
+  let observer = null;
+
+  const timeoutId = setTimeout(() => {
+    if (document.getElementById('products-page')) return;
+
+    observer = new IntersectionObserver(observerCallback, observerOptions);
+    
+    const sections = document.querySelectorAll('#home, #products, #categories, #about, #contact');
+    sections.forEach((section) => {
+      observer.observe(section);
+    });
+  }, 150);
+
+  return () => {
+    clearTimeout(timeoutId);
+    if (observer) observer.disconnect();
+  };
+}, [currentPage]);
+
 
   useEffect(() => {
     if (currentPage === 'products') {
       setActiveLink('#products');
     } else if (currentPage === 'home') {
-      setActiveLink('#home');
+      // Only reset to #home if there isn't a more specific scroll target
+      // already pending (e.g. user clicked Categories from the Products page).
+      if (!pendingScrollRef.current) {
+        setActiveLink('#home');
+      }
     }
   }, [currentPage]);
 
@@ -86,29 +156,66 @@ const TopBar = ({ currentPage = 'home', onNavigate, onClearProduct }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isMenuOpen]);
 
-  const handleLinkClick = (href, page, event) => {
+  const handleLinkClick = async (href, page, event) => {
     event.preventDefault();
     setIsMenuOpen(false);
+    setOpenDropdown(null);
 
-    // CRITICAL FIX: Clear out the open product details overlay 
-    // to unblock the main layout viewport canvas.
+    // Clear product modal popups if navigating away
     if (onClearProduct) {
       onClearProduct();
     }
 
+    // Case A: User selected "All Products" (page is explicitly set to 'products')
     if (page === 'products') {
+      pendingScrollRef.current = null; // no scroll needed, we're switching the whole page view
       onNavigate?.('products');
       setActiveLink('#products');
       return;
     }
 
+    // Case B: User selected "Our Collections", "Categories", or other home anchors
+    const scrollToken = Symbol(href);
+    pendingScrollRef.current = scrollToken;
+
+    // Track if we are leaping across different pages
+    const isCrossPageLeap = currentPage !== 'home';
+
     onNavigate?.('home');
     setActiveLink(href);
 
+    const targetSelector = href.startsWith('#') ? href : `#${href}`;
+    const targetSection = await waitForElement(targetSelector, { timeout: 1500, interval: 30 });
+
+    if (pendingScrollRef.current !== scrollToken) return;
+
+    if (targetSection) {
+      // 1. Initial scroll to target location
+      targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      // 2. Layout Shift Protection Loop:
+      // If we jumped from another page, follow up on layout shifts caused by 
+      // incoming Supabase requests expanding sections above us.
+      if (isCrossPageLeap) {
+        let checkCount = 0;
+        const layoutInterval = setInterval(() => {
+          checkCount++;
+          if (pendingScrollRef.current === scrollToken && targetSection) {
+            targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+          if (checkCount >= 5) clearInterval(layoutInterval);
+        }, 250); // Re-align smoothly over 1.25 seconds as data resolves
+      }
+    }
+
+    // 3. Dynamic Protection Window:
+    // Keep the IntersectionObserver locked out longer for cross-page navigation
+    // to give smooth scroll and data rendering time to finalize layout boundaries.
     setTimeout(() => {
-      const targetSection = document.querySelector(href);
-      targetSection?.scrollIntoView({ behavior: 'smooth' });
-    }, 50);
+      if (pendingScrollRef.current === scrollToken) {
+        pendingScrollRef.current = null;
+      }
+    }, isCrossPageLeap ? 1500 : 500);
   };
 
   return (
@@ -120,16 +227,42 @@ const TopBar = ({ currentPage = 'home', onNavigate, onClearProduct }) => {
         </div>
 
         <nav className={`${styles.navLinks} ${isMenuOpen ? styles.mobileOpen : ''}`}>
-          {navLinks.map(({ href, label, page }) => (
-            <a
-              key={href}
-              href={href}
-              className={`${styles.navItem} ${activeLink === href ? styles.active : ''}`}
-              onClick={(event) => handleLinkClick(href, page, event)}
-            >
-              {label}
-            </a>
-          ))}
+          {navLinks.map((link) => {
+            const hasDropdown = !!link.dropdown;
+            return (
+              <div 
+                key={link.href}
+                className={styles.navItemWrapper}
+                onMouseEnter={() => !isMobile && hasDropdown && setOpenDropdown(link.label)}
+                onMouseLeave={() => !isMobile && setOpenDropdown(null)}
+              >
+                <a
+                  href={link.href}
+                  className={`${styles.navItem} ${activeLink === link.href ? styles.active : ''} ${hasDropdown ? styles.hasDropdown : ''}`}
+                  onClick={(event) => handleLinkClick(link.href, link.page, event)}
+                >
+                  {link.label}
+                  {hasDropdown && <HiChevronDown className={styles.chevronIcon} />}
+                </a>
+
+                {/* Dropdown Menu Overlay Canvas Layer */}
+                {hasDropdown && (openDropdown === link.label || isMobile) && (
+                  <div className={`${styles.dropdownMenu} ${isMobile ? styles.mobileDropdown : ''}`}>
+                    {link.dropdown.map((subLink, subIdx) => (
+                      <a
+                        key={`${subLink.href}-${subIdx}`}
+                        href={subLink.href}
+                        className={styles.dropdownItem}
+                        onClick={(event) => handleLinkClick(subLink.href, subLink.page, event)}
+                      >
+                        {subLink.label}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </nav>
 
         <button

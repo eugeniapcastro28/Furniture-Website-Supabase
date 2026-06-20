@@ -1,17 +1,21 @@
 .page {
-  /* Ensure it fits cleanly inside the viewport frame bounds */
-  height: 100vh; 
+  height: 100vh;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  
-  /* Retain your scrolling architecture cleanly */
-  overflow-y: auto;
-  overflow-x: hidden;
+  /* overflow-y: auto;
+  overflow-x: hidden; */
   background-color: #F6F5F1;
-  
-  /* 🌟 ADD THIS: Ensures explicit scroll positioning changes apply instantly without animations fighting back */
-  scroll-behavior: auto !important; 
+  scroll-behavior: auto !important;
+  padding-top: var(--header-height, 76px);
+  overflow-anchor: none;
+}
+ 
+@media (max-width: 1050px) {
+  .page {
+    /* FIX 2: Clear mobile top padding as well */
+    padding-top: 0; 
+  }
 }
 
 .page::-webkit-scrollbar {
@@ -37,7 +41,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #F6F5F1; /* match page background (light) */
+  background-color: #F6F5F1;
 }
 
 .loaderLogo {
@@ -46,6 +50,11 @@
   animation: pulse 1.8s infinite ease-in-out;
 }
 
+@keyframes pulse {
+  0%   { transform: scale(0.96); opacity: 0.65; }
+  50%  { transform: scale(1.04); opacity: 1; }
+  100% { transform: scale(0.96); opacity: 0.65; }
+}
 @keyframes pulse {
   0%   { transform: scale(0.96); opacity: 0.65; }
   50%  { transform: scale(1.04); opacity: 1; }

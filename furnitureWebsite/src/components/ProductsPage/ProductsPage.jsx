@@ -31,23 +31,31 @@ const ProductsPage = ({ onSelectProduct, onBack }) => {
     fetchLiveInventory();
   }, []);
 
-  useEffect(() => {
+useEffect(() => {
+  const resetViewportToTop = () => {
     const scrollContainer = document.querySelector('[data-scroll-container]');
-    const resetViewportToTop = () => {
-      if (scrollContainer) {
-        scrollContainer.scrollTop = 0;
-        scrollContainer.scrollLeft = 0;
-        scrollContainer.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-      }
-      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
-    };
+    if (scrollContainer) {
+      scrollContainer.scrollTop = 0;
+      scrollContainer.scrollLeft = 0;
+    }
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  };
 
+  resetViewportToTop();
+
+  // Keep correcting for ~1.5s while Supabase data + lazy images settle
+  // and potentially change page height underneath us.
+  let checkCount = 0;
+  const correctionInterval = setInterval(() => {
+    checkCount++;
     resetViewportToTop();
-    const backupTimer = setTimeout(resetViewportToTop, 15);
-    return () => clearTimeout(backupTimer);
-  }, []);
+    if (checkCount >= 6) clearInterval(correctionInterval);
+  }, 250);
+
+  return () => clearInterval(correctionInterval);
+}, [loading]);
 
   useEffect(() => {
     if (loading) return; 

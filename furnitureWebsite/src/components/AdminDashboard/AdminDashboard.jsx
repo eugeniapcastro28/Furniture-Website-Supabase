@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../config/supabaseClient';
 import ProductCard from './ProductCard';
 import ProductModal from './ProductModal';
+import HeroManager from './HeroManager';
 import styles from './AdminDashboard.module.css';
 import { HiPlus } from 'react-icons/hi';
 import { categories } from '../../data/products';
@@ -29,7 +30,7 @@ const AdminDashboard = () => {
       if (error) throw error;
       setProducts(data || []);
     } catch (err) {
-      console.error('Fetch error:', err.message);
+      showToast('Failed to load inventory: ' + err.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -41,7 +42,6 @@ const AdminDashboard = () => {
   const openEditModal = (product) => { setEditingProduct(product); setIsModalOpen(true); };
 
   const handleDelete = async (id, imageUrl) => {
-    if (!window.confirm('Permanently remove this item from inventory?')) return;
     try {
       const { error } = await supabase.from('products').delete().eq('id', id);
       if (error) throw error;
@@ -55,26 +55,25 @@ const AdminDashboard = () => {
       }
 
       setProducts(prev => prev.filter(p => p.id !== id));
+      showToast('Product removed from inventory.');
     } catch (err) {
-      alert('Deletion error: ' + err.message);
+      showToast('Deletion error: ' + err.message, 'error');
     }
   };
 
-  // Filter by active category first
   const filteredProducts = activeCategory === 'all'
     ? products
     : products.filter(p =>
         (p.category || '').trim().toLowerCase() === activeCategory.trim().toLowerCase()
       );
 
-  // Then split into available / out of stock
-  const available   = filteredProducts.filter(p => p.in_stock !== false && p.inStock !== false);
-  const outOfStock  = filteredProducts.filter(p => p.in_stock === false || p.inStock === false);
+  const available  = filteredProducts.filter(p => p.in_stock !== false && p.inStock !== false);
+  const outOfStock = filteredProducts.filter(p => p.in_stock === false || p.inStock === false);
 
   return (
     <div className={styles.adminContainer}>
 
-      {/* ── Header ── */}
+      {/* ── Products Header ── */}
       <div className={styles.adminHeader}>
         <div>
           <span className={styles.eyebrow}>Management Panel</span>
@@ -93,9 +92,7 @@ const AdminDashboard = () => {
           onClick={() => setActiveCategory('all')}
         >
           All
-          <span className={styles.filterCount}>
-            {products.length}
-          </span>
+          <span className={styles.filterCount}>{products.length}</span>
         </button>
         {categories.map(cat => {
           const count = products.filter(p =>
@@ -114,7 +111,7 @@ const AdminDashboard = () => {
         })}
       </div>
 
-      {/* ── Content ── */}
+      {/* ── Product Grid ── */}
       {loading ? (
         <div className={styles.loader}>Loading inventory...</div>
       ) : filteredProducts.length === 0 ? (
@@ -125,7 +122,6 @@ const AdminDashboard = () => {
         </div>
       ) : (
         <>
-          {/* Active listings */}
           {available.length > 0 && (
             <div className={styles.stockSection}>
               <h3 className={styles.stockTitle}>
@@ -140,7 +136,6 @@ const AdminDashboard = () => {
             </div>
           )}
 
-          {/* Out of stock */}
           {outOfStock.length > 0 && (
             <div className={styles.outOfStockSection}>
               <h3 className={`${styles.stockTitle} ${styles.stockTitleMuted}`}>
@@ -157,7 +152,10 @@ const AdminDashboard = () => {
         </>
       )}
 
-      {/* ── Modal ── */}
+      {/* ── Hero Slideshow Manager ── */}
+      <HeroManager onToast={showToast} />
+
+      {/* ── Product Modal ── */}
       {isModalOpen && (
         <ProductModal
           key={editingProduct ? editingProduct.id : 'new'}

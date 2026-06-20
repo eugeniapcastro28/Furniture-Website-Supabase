@@ -2,14 +2,27 @@
 .hero {
   position: relative;
   width: 100%;
-  height: calc(100vh - 76px); /* Forces exact remaining screen layout sizing */
-  min-height: 600px; /* Prevents text crushing on ultra-short display screens */
+  
+  /* FIX 3: Change height to fill the remaining viewport height cleanly.
+     If your TopBar is in the normal layout flow, this makes them touch perfectly */
+  height: calc(100vh - 76px); 
+  min-height: 600px; 
   display: flex;
   flex-direction: column;
   overflow: hidden;
   background-color: #1a1510;
-  scroll-margin-top: 76px;
   box-sizing: border-box;
+  
+  /* FIX 4: Use scroll-margin-top to handle sticky header offsets during anchor scrolls */
+  scroll-margin-top: 76px; 
+}
+
+@media (max-width: 1050px) {
+  .hero {
+    /* FIX 5: Adjust height calculation to match your mobile header height profile */
+    height: calc(100vh - 64px);
+    scroll-margin-top: 64px;
+  }
 }
 
 /* ── BACKGROUND SLIDESHOW MANAGEMENT ─────────────────────── */
@@ -226,26 +239,46 @@
 }
 
 /* ── MEDIA QUERIES RESPONSIVENESS ───────────────────────── */
-@media (max-width: 960px) {
-  .heroContent {
-    padding: 40px 24px 60px;
-    justify-content: center;
-  }
-
-  .heroLeft {
-    max-width: 100%;
-    align-items: center;
-    text-align: center;
-  }
-
-  .heroDesc { margin-left: auto; margin-right: auto; }
-  .heroMeta { justify-content: center; }
-}
-
 @media (max-width: 600px) {
-  .hero { 
-    height: calc(100svh - 76px); /* Fixes mobile viewport safari shifts */
+  .hero {
+    height: auto;
+    min-height: 0;
+    /* padding-top: 76px; account for fixed header */
   }
-  .heroTitle { font-size: clamp(1.9rem, 7vw, 2.8rem); }
-  .heroCta { width: 100%; text-align: center; box-sizing: border-box; }
+
+  .heroBg {
+    position: absolute;   /* fills whatever height .hero ends up being */
+    inset: 0;
+    height: 100%;
+  }
+
+  .heroContent {
+    position: relative;   /* this is what actually sets .hero's height now */
+    align-items: flex-start;
+    padding: 32px 20px 40px;
+    min-height: 480px;    /* keeps the image from looking too short */
+  }
+
+  .heroEyebrow {
+    margin-bottom: 14px;
+  }
+
+  .heroTitle {
+    margin-bottom: 10px;
+    font-size: clamp(1.9rem, 7vw, 2.8rem);
+  }
+
+  .heroDesc {
+    margin-bottom: 16px;
+  }
+
+  .heroMeta {
+    margin-bottom: 16px;
+  }
+
+  .heroCta {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
 }
