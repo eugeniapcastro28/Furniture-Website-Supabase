@@ -6,6 +6,7 @@ import HeroManager from './HeroManager';
 import styles from './AdminDashboard.module.css';
 import { HiPlus } from 'react-icons/hi';
 import { categories } from '../../data/products';
+import CategoryManager from './CategoryManager';
 
 const AdminDashboard = () => {
   const [products, setProducts] = useState([]);
@@ -154,6 +155,7 @@ const AdminDashboard = () => {
 
       {/* ── Hero Slideshow Manager ── */}
       <HeroManager onToast={showToast} />
+      <CategoryManager onToast={showToast} />
 
       {/* ── Product Modal ── */}
       {isModalOpen && (

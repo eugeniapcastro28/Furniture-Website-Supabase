@@ -48,7 +48,7 @@ const waitForElement = (selector, { timeout = 1500, interval = 30 } = {}) => {
   });
 };
 
-const TopBar = ({ currentPage = 'home', onNavigate, onClearProduct }) => {
+const TopBar = ({ currentPage = 'home', selectedCategory = 'all', onNavigate, onClearProduct }) => {
   const [activeLink, setActiveLink] = useState('#home');
   const [isMobile, setIsMobile] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -138,15 +138,19 @@ useEffect(() => {
 
   useEffect(() => {
     if (currentPage === 'products') {
-      setActiveLink('#products');
+      // 🌟 FIX: If a specific category card was clicked, tie the TopBar highlight 
+      // directly to the active hash value so its CSS active rules match up!
+      if (selectedCategory && selectedCategory !== 'all') {
+        setActiveLink(`#${selectedCategory}`);
+      } else {
+        setActiveLink('#products');
+      }
     } else if (currentPage === 'home') {
-      // Only reset to #home if there isn't a more specific scroll target
-      // already pending (e.g. user clicked Categories from the Products page).
       if (!pendingScrollRef.current) {
         setActiveLink('#home');
       }
     }
-  }, [currentPage]);
+  }, [currentPage, selectedCategory]);
 
   useEffect(() => {
     const handleClickOutside = (e) => {

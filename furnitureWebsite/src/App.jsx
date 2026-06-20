@@ -11,19 +11,17 @@ import ContactSection from './components/ContactSection/ContactSection';
 import ProductDetail from './components/ProductDetail/ProductDetail';
 import AdminDashboard from './components/AdminDashboard/AdminDashboard';
 
-// 🌟 Import your real-time client config wrapper
 import { supabase } from './config/supabaseClient'; 
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [currentView, setCurrentView] = useState('home'); // 'home' or 'products'
+  const [selectedCategory, setSelectedCategory] = useState('all'); // 🌟 NEW: Track current category filter globally
   const [isAdminRoute, setIsAdminRoute] = useState(false);
-
-  // 🌟 State holding live furniture database inventory
   const [dbProducts, setDbProducts] = useState([]);
 
-  // 🌟 Core data sync hook from Supabase
+  // Fetch live products
   const fetchLiveDatabaseItems = async () => {
     try {
       const { data, error } = await supabase
@@ -33,10 +31,8 @@ const App = () => {
         
       if (error) throw error;
 
-      // Map Supabase column names to match your frontend keys perfectly
       const formattedData = (data || []).map(item => ({
         ...item,
-        // Fallbacks keep older fields stable if missing in specific rows
         image: item.image_url, 
         images: [item.image_url],
         inStock: item.inStock !== undefined ? item.inStock : true
@@ -53,7 +49,6 @@ const App = () => {
       setIsAdminRoute(true);
     }
 
-    // Run parallel loaders cleanly
     const loadApp = async () => {
       await fetchLiveDatabaseItems();
       setIsLoading(false);
@@ -100,7 +95,6 @@ const App = () => {
     );
   }
 
-  // Admin routing branch
   if (isAdminRoute) {
     return (
       <div className={styles.page}>
@@ -118,35 +112,48 @@ const App = () => {
     <div className={styles.page} data-scroll-container>
       <TopBar 
         currentPage={currentView} 
-        onNavigate={setCurrentView} 
+        selectedCategory={selectedCategory} // 🌟 ADDED PROP HERE
+        onNavigate={(view) => {
+          setCurrentView(view);
+          if (view === 'home') setSelectedCategory('all'); 
+        }} 
         onClearProduct={() => setSelectedProduct(null)}
       />
       <main>
         {currentView === 'home' ? (
           <>
             <HomePage />
-            {/* 🌟 Pass live database products array to your Home landing component */}
             <ProductsSection 
               products={dbProducts}
               onSelectProduct={setSelectedProduct}
-              onViewAll={() => setCurrentView('products')}
+              onViewAll={() => {
+                setSelectedCategory('all');
+                setCurrentView('products');
+              }}
             />
-            <CategoriesSection />
+            {/* 🌟 ADDED PROPS HERE: Send the navigation and selection state controllers down */}
+            <CategoriesSection 
+              onNavigate={setCurrentView}
+              onSetCategory={setSelectedCategory}
+            />
             <AboutSection />
           </>
         ) : (
-          /* 🌟 Pass live database products array into your standalone catalog component */
+          /* 🌟 ADDED PROP HERE: Pass the state category directly into your standalone catalog page */
           <ProductsPage
             products={dbProducts}
+            initialCategory={selectedCategory}
             onSelectProduct={setSelectedProduct}
-            onBack={() => setCurrentView('home')}
+            onBack={() => {
+              setCurrentView('home');
+              setSelectedCategory('all');
+            }}
           />
         )}
         
         <ContactSection />
       </main>
 
-      {/* 🌟 Pass dynamic items down so similar listings parse context accurately */}
       {selectedProduct && (
         <ProductDetail
           product={selectedProduct}

@@ -1,26 +1,49 @@
 import React, { useEffect, useState, useRef } from 'react';
 import styles from './ProductsPage.module.css';
-import { categories } from '../../data/products'; 
 import { supabase } from '../../config/supabaseClient'; 
 
-const ProductsPage = ({ onSelectProduct, onBack }) => {
+// 🌟 REMOVED: Static hardcoded categories array dependency
+
+const ProductsPage = ({ onSelectProduct, onBack, initialCategory = 'all' }) => {
   const [products, setProducts] = useState([]); 
+  const [dbCategories, setDbCategories] = useState([]); // 🌟 Dynamic category buttons state
   const [loading, setLoading] = useState(true); 
-  const [activeCategory, setActiveCategory] = useState('all');
+  // 🌟 Dynamic state initialization from the homepage category choice
+  const [activeCategory, setActiveCategory] = useState(initialCategory);
   const [visibleProductIds, setVisibleProductIds] = useState([]);
   const observer = useRef(null);
+
+  // Sync active category if the incoming prop changes
+  useEffect(() => {
+    if (initialCategory) {
+      setActiveCategory(initialCategory);
+    }
+  }, [initialCategory]);
   
+  // FETCH LIVE INVENTORY & DYNAMIC FILTER BUTTONS
   useEffect(() => {
     const fetchLiveInventory = async () => {
       try {
         setLoading(true);
-        const { data, error } = await supabase
+        
+        // 1. Fetch products
+        const { data: prodData, error: prodError } = await supabase
           .from('products')
           .select('*')
           .order('created_at', { ascending: false });
 
-        if (error) throw error;
-        setProducts(data || []);
+        if (prodError) throw prodError;
+        setProducts(prodData || []);
+
+        // 2. Fetch categories for tab bar alignment
+        const { data: catData, error: catError } = await supabase
+          .from('categories')
+          .select('*')
+          .order('sort_order', { ascending: true });
+
+        if (catError) throw catError;
+        setDbCategories(catData || []);
+
       } catch (error) {
         console.error('Error loading page inventory data:', error.message);
       } finally {
@@ -31,31 +54,29 @@ const ProductsPage = ({ onSelectProduct, onBack }) => {
     fetchLiveInventory();
   }, []);
 
-useEffect(() => {
-  const resetViewportToTop = () => {
-    const scrollContainer = document.querySelector('[data-scroll-container]');
-    if (scrollContainer) {
-      scrollContainer.scrollTop = 0;
-      scrollContainer.scrollLeft = 0;
-    }
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-  };
+  useEffect(() => {
+    const resetViewportToTop = () => {
+      const scrollContainer = document.querySelector('[data-scroll-container]');
+      if (scrollContainer) {
+        scrollContainer.scrollTop = 0;
+        scrollContainer.scrollLeft = 0;
+      }
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    };
 
-  resetViewportToTop();
-
-  // Keep correcting for ~1.5s while Supabase data + lazy images settle
-  // and potentially change page height underneath us.
-  let checkCount = 0;
-  const correctionInterval = setInterval(() => {
-    checkCount++;
     resetViewportToTop();
-    if (checkCount >= 6) clearInterval(correctionInterval);
-  }, 250);
 
-  return () => clearInterval(correctionInterval);
-}, [loading]);
+    let checkCount = 0;
+    const correctionInterval = setInterval(() => {
+      checkCount++;
+      resetViewportToTop();
+      if (checkCount >= 6) clearInterval(correctionInterval);
+    }, 250);
+
+    return () => clearInterval(correctionInterval);
+  }, [loading]);
 
   useEffect(() => {
     if (loading) return; 
@@ -84,6 +105,7 @@ useEffect(() => {
     };
   }, [activeCategory, loading, products]);
 
+  // 🌟 Filter logic using slugs for precise live matching
   const filteredProducts = activeCategory === 'all'
     ? products
     : products.filter((product) => {
@@ -91,8 +113,8 @@ useEffect(() => {
         return product.category.trim().toLowerCase() === activeCategory.trim().toLowerCase();
       });
 
-    const availableProducts = filteredProducts.filter(p => p.in_stock !== false && p.inStock !== false);
-    const outOfStockProducts = filteredProducts.filter(p => p.in_stock === false || p.inStock === false);
+  const availableProducts = filteredProducts.filter(p => p.in_stock !== false && p.inStock !== false);
+  const outOfStockProducts = filteredProducts.filter(p => p.in_stock === false || p.inStock === false);
 
   const formatPrice = (priceVal) => {
     if (priceVal === undefined || priceVal === null) return '';
@@ -124,6 +146,7 @@ useEffect(() => {
         </button>
       </div>
 
+      {/* 🌟 Tab Navigation Filters Dynamically Driven from Database */}
       <div className={styles.filters}>
         <button
           className={`${styles.filterBtn} ${activeCategory === 'all' ? styles.filterActive : ''}`}
@@ -131,11 +154,11 @@ useEffect(() => {
         >
           All
         </button>
-        {categories.map((cat) => (
+        {dbCategories.map((cat) => (
           <button
             key={cat.id}
-            className={`${styles.filterBtn} ${activeCategory.toLowerCase() === cat.id.toLowerCase() ? styles.filterActive : ''}`}
-            onClick={() => setActiveCategory(cat.id)}
+            className={`${styles.filterBtn} ${activeCategory.toLowerCase() === cat.slug.toLowerCase() ? styles.filterActive : ''}`}
+            onClick={() => setActiveCategory(cat.slug)}
           >
             {cat.label}
           </button>
@@ -143,13 +166,11 @@ useEffect(() => {
       </div>
 
       <div className={styles.catalogWrapper}>
-        
         {/* Available Collection Grid */}
         {availableProducts.length > 0 && (
           <div className={styles.stockSection}>
             <div className={styles.grid}>
               {availableProducts.map((product) => {
-                // 🌟 Extract first image from array safely
                 const displayImg = Array.isArray(product.image_url) ? product.image_url[0] : product.image_url;
                 return (
                   <div
@@ -195,7 +216,6 @@ useEffect(() => {
             <h2 className={styles.stockTitle}>Temporarily Out of Stock</h2>
             <div className={styles.grid}>
               {outOfStockProducts.map((product) => {
-                // 🌟 Extract first image from array safely
                 const displayImg = Array.isArray(product.image_url) ? product.image_url[0] : product.image_url;
                 return (
                   <div
