@@ -67,16 +67,11 @@ const ProductsPage = ({ onSelectProduct, onBack, initialCategory = 'all' }) => {
     };
 
     resetViewportToTop();
-
-    let checkCount = 0;
-    const correctionInterval = setInterval(() => {
-      checkCount++;
-      resetViewportToTop();
-      if (checkCount >= 6) clearInterval(correctionInterval);
-    }, 250);
+    requestAnimationFrame(resetViewportToTop);
+    const correctionInterval = setInterval(resetViewportToTop, 250);
 
     return () => clearInterval(correctionInterval);
-  }, [loading]);
+  }, []);
 
   useEffect(() => {
     if (loading) return; 

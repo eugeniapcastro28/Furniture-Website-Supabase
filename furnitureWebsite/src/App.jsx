@@ -75,11 +75,12 @@ const App = () => {
         scrollContainer.scrollTop = 0;
         scrollContainer.scrollLeft = 0;
       }
-      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
       document.documentElement.scrollTop = 0;
       document.body.scrollTop = 0;
     };
     execution();
+    requestAnimationFrame(execution);
     setTimeout(execution, 0);
   };
 
