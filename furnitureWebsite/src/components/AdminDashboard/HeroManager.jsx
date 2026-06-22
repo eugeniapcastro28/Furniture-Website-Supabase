@@ -5,8 +5,8 @@ import { HiPlus, HiPencil, HiTrash, HiPhotograph } from 'react-icons/hi';
 import HeroModal from './HeroModal';
 
 const HeroManager = ({ onToast }) => {
-  const [slides, setSlides] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [slides, setSlides]           = useState([]);
+  const [loading, setLoading]         = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSlide, setEditingSlide] = useState(null);
 
@@ -32,12 +32,11 @@ const HeroManager = ({ onToast }) => {
     try {
       const { error } = await supabase.from('hero_slides').delete().eq('id', id);
       if (error) throw error;
-
       if (imageUrl) {
         const parts = imageUrl.split('/storage/v1/object/public/hero-images/');
-        if (parts.length > 1) await supabase.storage.from('hero-images').remove([parts[1]]);
+        if (parts.length > 1)
+          await supabase.storage.from('hero-images').remove([parts[1]]);
       }
-
       setSlides(prev => prev.filter(s => s.id !== id));
       onToast('Hero slide removed.');
     } catch (err) {
@@ -45,24 +44,21 @@ const HeroManager = ({ onToast }) => {
     }
   };
 
-  const openCreate = () => { setEditingSlide(null); setIsModalOpen(true); };
-  const openEdit = (slide) => { setEditingSlide(slide); setIsModalOpen(true); };
+  const openCreate = ()      => { setEditingSlide(null);  setIsModalOpen(true); };
+  const openEdit   = (slide) => { setEditingSlide(slide); setIsModalOpen(true); };
 
   return (
-    <div className={styles.heroManagerSection}>
-      <div className={styles.heroManagerHeader}>
-        <div>
-          <span className={styles.eyebrow}>Hero Section</span>
-          <h3 className={styles.sectionTitle}>Homepage Slideshow</h3>
-          <p className={styles.sectionSubtitle}>Manage the rotating hero images shown on the homepage.</p>
-        </div>
+    <div>
+      {/* Tab-level action bar */}
+      <div className={styles.tabActionBar}>
+        <p className={styles.tabDesc}>Manage the rotating hero images displayed on the homepage.</p>
         <button className={styles.addBtn} onClick={openCreate}>
           <HiPlus /> Add Slide
         </button>
       </div>
 
       {loading ? (
-        <div className={styles.loader}>Loading slides...</div>
+        <div className={styles.loader}>Loading slides…</div>
       ) : slides.length === 0 ? (
         <div className={styles.emptyState}>
           <HiPhotograph className={styles.emptyIcon} />
@@ -91,7 +87,7 @@ const HeroManager = ({ onToast }) => {
               </div>
               <div className={styles.slideInfo}>
                 <span className={styles.slideName}>{slide.name}</span>
-                <span className={styles.slideMaterial}>{slide.material}</span>
+                <span className={styles.slideMeta}>{slide.material}</span>
               </div>
             </div>
           ))}

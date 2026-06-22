@@ -1,10 +1,11 @@
 .page {
   height: 100vh;
   min-height: 100vh;
+  box-sizing: border-box; /* padding-top now counts inside the 100vh, not added on top */
   display: flex;
   flex-direction: column;
-  /* overflow-y: auto;
-  overflow-x: hidden; */
+  overflow-y: auto;
+  overflow-x: hidden;
   background-color: #F6F5F1;
   scroll-behavior: auto !important;
   padding-top: var(--header-height, 76px);

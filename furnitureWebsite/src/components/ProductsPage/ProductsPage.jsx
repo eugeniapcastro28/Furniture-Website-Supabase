@@ -55,23 +55,29 @@ const ProductsPage = ({ onSelectProduct, onBack, initialCategory = 'all' }) => {
   }, []);
 
   useEffect(() => {
-    const resetViewportToTop = () => {
-      const scrollContainer = document.querySelector('[data-scroll-container]');
-      if (scrollContainer) {
-        scrollContainer.scrollTop = 0;
-        scrollContainer.scrollLeft = 0;
-      }
-      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
-    };
+  const resetViewportToTop = () => {
+    const scrollContainer = document.querySelector('[data-scroll-container]');
+    if (scrollContainer) {
+      scrollContainer.scrollTop = 0;
+      scrollContainer.scrollLeft = 0;
+    }
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  };
 
+  resetViewportToTop();
+  requestAnimationFrame(resetViewportToTop);
+
+  let checkCount = 0;
+  const correctionInterval = setInterval(() => {
+    checkCount++;
     resetViewportToTop();
-    requestAnimationFrame(resetViewportToTop);
-    const correctionInterval = setInterval(resetViewportToTop, 250);
+    if (checkCount >= 6) clearInterval(correctionInterval); // stop after ~1.5s
+  }, 250);
 
-    return () => clearInterval(correctionInterval);
-  }, []);
+  return () => clearInterval(correctionInterval);
+}, [loading]); // re-run once products + categories finish fetching, catching any layout shift from the filter row expanding
 
   useEffect(() => {
     if (loading) return; 

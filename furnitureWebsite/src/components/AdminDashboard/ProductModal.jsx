@@ -3,6 +3,26 @@ import { supabase } from '../../config/supabaseClient';
 import styles from './ProductModal.module.css';
 import { HiX, HiUpload, HiEye, HiSparkles } from 'react-icons/hi';
 
+const resizeImageBeforeUpload = (file, maxWidth = 1400, maxHeight = 1800) => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      // ✅ Cap both width AND height
+      const scale = Math.min(1, maxWidth / img.width, maxHeight / img.height);
+      canvas.width  = img.width  * scale;
+      canvas.height = img.height * scale;
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(blob => {
+        resolve(new File([blob], file.name, { type: 'image/webp' }));
+        URL.revokeObjectURL(url);
+      }, 'image/webp', 0.85);
+    };
+    img.src = url;
+  });
+};
+
 // 🌟 Added 'takenDisplayOrders' prop (expecting an array of numbers like [1, 3, 4])
 const ProductModal = ({ isOpen, product, onClose, onRefresh, showToast = [] }) => {
   const [visible, setVisible] = useState(false);
@@ -31,6 +51,24 @@ const ProductModal = ({ isOpen, product, onClose, onRefresh, showToast = [] }) =
   const [currentCareInput, setCurrentCareInput] = useState('');
   const [uploading, setUploading] = useState(false);
   const [takenDisplayOrders, setTakenDisplayOrders] = useState([]);
+  const [categories, setCategories] = useState([]); // 👈 add here
+
+// ✅ Move this useEffect up too, before the `if (!visible) return null` line
+useEffect(() => {
+  const fetchCategories = async () => {
+    if (!isOpen) return;
+    const { data, error } = await supabase
+      .from('categories')
+      .select('slug, label')
+      .order('sort_order', { ascending: true });
+
+    if (!error && data && data.length > 0) {
+      setCategories(data);
+      if (!product) setCategory(data[0].slug);
+    }
+  };
+  fetchCategories();
+}, [isOpen]);
 
   // Handle open/close visibility
   useEffect(() => {
@@ -80,7 +118,7 @@ const ProductModal = ({ isOpen, product, onClose, onRefresh, showToast = [] }) =
 
     if (product) {
       setName(product.name || '');
-      setCategory(product.category || 'seating');
+      setCategory(product.category || '');
       setDescription(product.description || '');
       setPrice(product.price || '');
       setMaterial(product.material || '');
@@ -119,7 +157,7 @@ const ProductModal = ({ isOpen, product, onClose, onRefresh, showToast = [] }) =
       const stockVal = product.in_stock ?? product.inStock;
       setInStock(stockVal != null ? Boolean(stockVal) : true);
     } else {
-      setName(''); setCategory('seating'); setDescription(''); setPrice('');
+      setName(''); setCategory(''); setDescription(''); setPrice('');
       setMaterial(''); setDimensions(''); setWeight(''); setFinish('');
       setColor(''); setOrigin(''); setLeadTime(''); setWarranty('');
       setDetails(''); setCareList([]); setImageQueue([]);
@@ -195,7 +233,7 @@ const ProductModal = ({ isOpen, product, onClose, onRefresh, showToast = [] }) =
     setImageQueue(updated);
     if (activePreviewIndex >= updated.length) setActivePreviewIndex(Math.max(0, updated.length - 1));
   };
-
+ 
   const handleDragStart = (i) => { dragItem.current = i; };
   const handleDragEnter = (i) => { dragOverItem.current = i; };
   const handleDragEnd = () => {
@@ -226,6 +264,7 @@ const ProductModal = ({ isOpen, product, onClose, onRefresh, showToast = [] }) =
       showToast('At least one image is required.', 'error');
       return;
     }
+  
 
     // Final safety check before pushing payload to database
     if (isFeatured && !displayOrder) {
@@ -238,17 +277,18 @@ const ProductModal = ({ isOpen, product, onClose, onRefresh, showToast = [] }) =
       const finalizedUrls = [];
 
       for (const item of imageQueue) {
-        if (item.isExisting) {
-          finalizedUrls.push(item.previewUrl);
-          continue;
-        }
-        const ext = item.file.name.split('.').pop();
-        const path = `products/${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`;
-        const { error: uploadError } = await supabase.storage.from('product-images').upload(path, item.file);
-        if (uploadError) throw uploadError;
-        const { data } = supabase.storage.from('product-images').getPublicUrl(path);
-        finalizedUrls.push(data.publicUrl);
-      }
+  if (item.isExisting) {
+    finalizedUrls.push(item.previewUrl);
+    continue;
+  }
+  const resized = await resizeImageBeforeUpload(item.file); // 👈 resize before upload
+  const path = `products/${Date.now()}_${Math.random().toString(36).substring(7)}.webp`;
+  const { error: uploadError } = await supabase.storage
+    .from('product-images').upload(path, resized);
+  if (uploadError) throw uploadError;
+  const { data } = supabase.storage.from('product-images').getPublicUrl(path);
+  finalizedUrls.push(data.publicUrl);
+}
 
       const payload = {
         name, category, description, price: parseFloat(price), material,
@@ -392,11 +432,15 @@ const ProductModal = ({ isOpen, product, onClose, onRefresh, showToast = [] }) =
               <div className={styles.inputGroup}>
                 <label>Category</label>
                 <select value={category} onChange={e => setCategory(e.target.value)}>
-                  <option value="seating">Seating</option>
-                  <option value="tables">Tables</option>
-                  <option value="storage">Storage</option>
-                  <option value="beds">Beds</option>
-                  <option value="decor & lighting">Decor & Lighting</option>
+                  {categories.length > 0 ? (
+                    categories.map(cat => (
+                      <option key={cat.slug} value={cat.slug}>
+                        {cat.label}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="" disabled>Loading categories...</option>
+                  )}
                 </select>
               </div>
               <div className={styles.inputGroup}>

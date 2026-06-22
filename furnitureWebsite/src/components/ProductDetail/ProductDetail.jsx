@@ -2,6 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import styles from './ProductDetail.module.css';
 import ContactSection from '../ContactSection/ContactSection';
 
+// Add this helper at the top of ProductDetail.jsx
+const optimizeImage = (url, width = 800, quality = 75) => {
+  if (!url || !url.includes('supabase')) return url;
+  return `${url}?width=${width}&quality=${quality}&format=webp`;
+};
+
 const ProductDetail = ({ product, allProducts, onClose, onSelectProduct }) => {
   const [activeImg, setActiveImg] = useState(0);
   const contactRef = useRef(null);
@@ -91,7 +97,7 @@ const ProductDetail = ({ product, allProducts, onClose, onSelectProduct }) => {
               {images[activeImg] || fallbackImage ? (
                 <img
                   key={activeImg}
-                  src={images[activeImg] || fallbackImage}
+                  src={optimizeImage(images[activeImg] || fallbackImage, 800, 80)}
                   alt={`${product.name} view ${activeImg + 1}`}
                   className={`${styles.mainImg} ${isOutOfStock ? styles.outOfStockImgDim : ''}`}
                   loading="eager"
@@ -123,12 +129,14 @@ const ProductDetail = ({ product, allProducts, onClose, onSelectProduct }) => {
                       onClick={() => setActiveImg(idx)}
                       aria-label={`View image ${idx + 1}`}
                     >
-                      <img 
-                        src={src} 
-                        alt="" 
-                        className={styles.thumbImg} 
-                        width="72" 
-                        height="72" 
+                      <img
+                        src={optimizeImage(src, 150, 60)}
+                        alt=""
+                        className={styles.thumbImg}
+                        loading="lazy"
+                        decoding="async"
+                        width="72"
+                        height="72"
                       />
                     </button>
                   );
@@ -262,11 +270,11 @@ const RelatedCard = ({ product, onSelect }) => {
       <div className={styles.relatedImgWrap}>
         {cardImg ? (
           <img
-            src={cardImg}
+            src={optimizeImage(cardImg, 400, 70)}
             alt={product.name}
             className={styles.relatedImg}
             loading="lazy"
-            decoding="async" 
+            decoding="async"
           />
         ) : (
           <div className={styles.noImagePlaceholderMini}>No Image</div>

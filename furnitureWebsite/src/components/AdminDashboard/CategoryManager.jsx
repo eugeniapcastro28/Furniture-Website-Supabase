@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../config/supabaseClient';
-import styles from './HeroManager.module.css'; // Reusing the same manager styling
+import styles from './HeroManager.module.css';
 import { HiPlus, HiPencil, HiTrash, HiPhotograph } from 'react-icons/hi';
 import CategoryModal from './CategoryModal';
 
 const CategoryManager = ({ onToast }) => {
-  const [cats, setCats] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [cats, setCats]               = useState([]);
+  const [loading, setLoading]         = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
 
@@ -29,40 +29,58 @@ const CategoryManager = ({ onToast }) => {
   useEffect(() => { fetchCategories(); }, []);
 
   const handleDelete = async (id, imageUrl) => {
-    try {
-      const { error } = await supabase.from('categories').delete().eq('id', id);
-      if (error) throw error;
+  try {
+    // ✅ Check if any products are using this category
+    const catToDelete = cats.find(c => c.id === id);
+    if (catToDelete) {
+      const { count, error: countError } = await supabase
+        .from('products')
+        .select('id', { count: 'exact', head: true })
+        .eq('category', catToDelete.slug);
 
-      if (imageUrl) {
-        const parts = imageUrl.split('/storage/v1/object/public/category-images/');
-        if (parts.length > 1) await supabase.storage.from('category-images').remove([parts[1]]);
+      if (countError) throw countError;
+
+      if (count > 0) {
+        onToast(
+          `Cannot delete "${catToDelete.label}" — it has ${count} product${count > 1 ? 's' : ''} linked to it. Reassign or remove them first.`,
+          'error'
+        );
+        return; // ❌ Block deletion entirely
       }
-
-      setCats(prev => prev.filter(c => c.id !== id));
-      onToast('Category removed.');
-    } catch (err) {
-      onToast('Delete failed: ' + err.message, 'error');
     }
-  };
 
-  const openCreate = () => { setEditingCategory(null); setIsModalOpen(true); };
-  const openEdit = (cat) => { setEditingCategory(cat); setIsModalOpen(true); };
+    // ✅ Safe to delete
+    const { error } = await supabase.from('categories').delete().eq('id', id);
+    if (error) throw error;
+
+    if (imageUrl) {
+      const parts = imageUrl.split('/storage/v1/object/public/category-images/');
+      if (parts.length > 1)
+        await supabase.storage.from('category-images').remove([parts[1]]);
+    }
+
+    setCats(prev => prev.filter(c => c.id !== id));
+    onToast('Category removed.');
+  } catch (err) {
+    onToast('Delete failed: ' + err.message, 'error');
+  }
+};
+
+  const openCreate = ()    => { setEditingCategory(null); setIsModalOpen(true); };
+  const openEdit   = (cat) => { setEditingCategory(cat);  setIsModalOpen(true); };
 
   return (
-    <div className={styles.heroManagerSection}>
-      <div className={styles.heroManagerHeader}>
-        <div>
-          <span className={styles.eyebrow}>Categories Section</span>
-          <h3 className={styles.sectionTitle}>Shop by Category Cards</h3>
-          <p className={styles.sectionSubtitle}>Manage the category cards shown on the homepage.</p>
-        </div>
+    <div>
+      {/* Tab-level action bar */}
+      <div className={styles.tabActionBar}>
+        <p className={styles.tabDesc}>Manage the category cards shown in the homepage browse section.</p>
         <button className={styles.addBtn} onClick={openCreate}>
           <HiPlus /> Add Category
         </button>
       </div>
 
       {loading ? (
-        <div className={styles.loader}>Loading categories...</div>
+        <div className={styles.loader}>Loading categories…</div>
       ) : cats.length === 0 ? (
         <div className={styles.emptyState}>
           <HiPhotograph className={styles.emptyIcon} />
@@ -91,7 +109,7 @@ const CategoryManager = ({ onToast }) => {
               </div>
               <div className={styles.slideInfo}>
                 <span className={styles.slideName}>{cat.label}</span>
-                <span className={styles.slideMaterial}>slug: {cat.slug}</span>
+                <span className={styles.slideMeta}>slug: {cat.slug}</span>
               </div>
             </div>
           ))}
