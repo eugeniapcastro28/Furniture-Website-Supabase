@@ -1,4 +1,4 @@
-/* ── OVERLAY — sits above everything ───────── */
+/* ── OVERLAY ───────────────────────────────── */
 .overlay {
   position: fixed;
   inset: 0;
@@ -13,11 +13,62 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.galleryHeaderActions {
-  display: flex;
-  width: 100%;
-  margin-bottom: 8px;
+@keyframes detailsRefresh {
+  from { opacity: 0; transform: translateY(20px); filter: blur(4px); }
+  to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
 }
+
+@keyframes imgFade {
+  from { opacity: 0; transform: scale(1.03); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── PAGE ───────────────────────────────────── */
+.page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 40px 40px 96px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  animation: detailsRefresh 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ── TOP BAR ────────────────────────────────── */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 32px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.breadcrumb { display: flex; align-items: center; gap: 8px; }
+
+.crumbLink {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #c3a26f;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.crumbLink:hover { color: #6b5027; }
+
+.crumbSep { color: #ccc; font-size: 0.75rem; }
+
+.crumbCurrent {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #aaa;
+}
+
+/* ── BACK BUTTON ────────────────────────────── */
+.galleryHeaderActions { display: flex; width: 100%; margin-bottom: 8px; }
 
 .inlineBackBtn {
   display: inline-flex;
@@ -36,129 +87,25 @@
   transition: color 0.25s ease;
   position: relative;
 }
-
 .inlineBackBtn::after {
   content: '';
   position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 0;
-  height: 1.5px;
+  left: 0; bottom: 0;
+  width: 0; height: 1.5px;
   background-color: #c3a26f;
   transition: width 0.25s ease;
 }
-
-.inlineBackBtn:hover {
-  color: #c3a26f;
-}
-
-.inlineBackBtn:hover::after {
-  width: 100%;
-}
+.inlineBackBtn:hover { color: #c3a26f; }
+.inlineBackBtn:hover::after { width: 100%; }
 
 .backArrow {
   font-size: 1.1rem;
   line-height: 1;
   transition: transform 0.22s ease;
 }
+.inlineBackBtn:hover .backArrow { transform: translateX(-4px); }
 
-.inlineBackBtn:hover .backArrow {
-  transform: translateX(-4px);
-}
-
-/* ── PAGE INNER ─────────────────────────────── */
-.page {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 40px 40px 96px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column; 
-  animation: detailsRefresh 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-@keyframes detailsRefresh {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-    filter: blur(4px); /* Optional: Soft luxury blur entry */
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0);
-  }
-}
-
-/* ── TOP BAR ────────────────────────────────── */
-.topBar {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end; /* Pushes breadcrumbs cleanly to the right */
-  margin-bottom: 32px;      /* Explicit breathing room before layout starts */
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.backBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: none;
-  border: 1.5px solid rgba(107, 80, 39, 0.25);
-  cursor: pointer;
-  font-family: 'Cinzel', serif;
-  font-size: 0.62rem;
-  letter-spacing: 1.8px;
-  text-transform: uppercase;
-  color: #6b5027;
-  padding: 9px 18px;
-  border-radius: 4px;
-  transition: all 0.22s ease;
-}
-
-.backBtn:hover {
-  background: #6b5027;
-  color: #f5ede0;
-  border-color: #6b5027;
-}
-
-.backArrow {
-  font-size: 1rem;
-  line-height: 1;
-}
-
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.crumbLink {
-  font-family: 'Cinzel', serif;
-  font-size: 0.6rem;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: #c3a26f;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-.crumbLink:hover { color: #6b5027; }
-
-.crumbSep {
-  color: #ccc;
-  font-size: 0.75rem;
-}
-
-.crumbCurrent {
-  font-family: 'Cinzel', serif;
-  font-size: 0.6rem;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: #aaa;
-}
-
-/* ── MAIN LAYOUT ────────────────────────────── */
+/* ── LAYOUT ─────────────────────────────────── */
 .layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -173,35 +120,31 @@
   flex-direction: column;
   gap: 14px;
   position: sticky;
-  top: 40px; /* Aligned with page padding top for crisp tracking */
+  top: 40px;
+}
+
+.galleryImgRow {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  align-items: flex-start;
 }
 
 .mainImgWrap {
   position: relative;
-  width: 100%;
-  aspect-ratio: 5 / 5;
+  flex: 1;
+  aspect-ratio: 1 / 1;
   border-radius: 16px;
   overflow: hidden;
   background: #ece9e3;
+  user-select: none;
 }
-
-.mainImg {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  animation: imgFade 0.3s ease both;
-}
-
-@keyframes imgFade {
-  from { opacity: 0; transform: scale(1.03); }
-  to   { opacity: 1; transform: scale(1); }
-}
+.mainImgWrapZoomed { cursor: zoom-out; }
+.mainImg { display: none; }
 
 .tag {
   position: absolute;
-  top: 16px;
-  left: 16px;
+  top: 16px; left: 16px;
   background: #c3a26f;
   color: #1a1510;
   font-family: 'Cinzel', serif;
@@ -213,16 +156,16 @@
   border-radius: 2px;
 }
 
-/* Thumbnails */
+/* ── THUMBNAILS ─────────────────────────────── */
 .thumbRow {
   display: flex;
+  flex-direction: column;
   gap: 10px;
-  flex-wrap: wrap;
+  flex-shrink: 0;
 }
 
 .thumb {
-  width: 72px;
-  height: 72px;
+  width: 72px; height: 72px;
   border-radius: 8px;
   overflow: hidden;
   border: 2px solid transparent;
@@ -232,15 +175,48 @@
   transition: border-color 0.2s ease, transform 0.2s ease;
   flex-shrink: 0;
 }
-
 .thumb:hover { transform: translateY(-2px); border-color: #c3a26f; }
 .thumbActive  { border-color: #6b5027; }
 
 .thumbImg {
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   object-fit: cover;
   display: block;
+}
+
+/* ── ZOOM HINTS ─────────────────────────────── */
+.zoomHint,
+.zoomActiveHint {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #f5ede0;
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 20px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.zoomHint      { background: rgba(26, 21, 16, 0.55); }
+.zoomActiveHint { background: rgba(26, 21, 16, 0.65); font-size: 0.52px; }
+
+/* ── STOCK BADGES ───────────────────────────── */
+.outOfStockBadge {
+  position: absolute;
+  top: 16px; right: 16px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  background-color: #7d7265;
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 4px;
 }
 
 /* ── INFO PANEL ─────────────────────────────── */
@@ -248,57 +224,31 @@
   display: flex;
   flex-direction: column;
   position: sticky;
-  top: 40px; /* Aligns clean tracking parallel with the gallery viewport */
-  max-height: calc(100vh - 136px); /* Locks sizing inside viewport window bounds */
+  top: 40px;
+  max-height: calc(100vh - 136px);
 }
 
-/* New: Keeps identity information fixed at top */
 .stickyHeader {
-  background-color: #F6F5F1; /* Matches the overlay sheet canvas color */
+  background-color: #F6F5F1;
   padding-bottom: 12px;
   z-index: 10;
 }
 
-/* ── SCROLLABLE CONTENT BLOCK ───────────────── */
 .scrollableContent {
   overflow-y: auto;
   flex: 1;
-  padding-right: 16px; /* Added slight room so text doesn't touch the track */
+  padding-right: 16px;
   margin-top: 8px;
-  
-  /* FireFox Support — sets track to transparent and thumb thin */
   scrollbar-width: thin;
   scrollbar-color: #c3a26f transparent;
 }
+.scrollableContent::-webkit-scrollbar        { width: 3px; }
+.scrollableContent::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+.scrollableContent::-webkit-scrollbar-track  { background: transparent; }
+.scrollableContent::-webkit-scrollbar-thumb  { background-color: #c3a26f; border-radius: 20px; }
+.scrollableContent::-webkit-scrollbar-thumb:hover { background-color: #6b5027; }
 
-/* 1. Track width/height sizing */
-.scrollableContent::-webkit-scrollbar {
-  width: 3px; /* Keeps the track beautifully ultra-thin */
-}
-
-/* 2. Completely isolates and removes the scrollbar up/down arrows */
-.scrollableContent::-webkit-scrollbar-button {
-  display: none;
-  width: 0;
-  height: 0;
-}
-
-/* 3. Base track backdrop style */
-.scrollableContent::-webkit-scrollbar-track {
-  background: transparent; /* Seamless blend into your #F6F5F1 page canvas */
-}
-
-/* 4. Elegant custom moving capsule indicator */
-.scrollableContent::-webkit-scrollbar-thumb {
-  background-color: #c3a26f; /* Using your accent tone */
-  border-radius: 20px;       /* Keeps it pill-shaped and smooth */
-}
-
-/* Optional hover highlight effect */
-.scrollableContent::-webkit-scrollbar-thumb:hover {
-  background-color: #6b5027; /* Darkens cleanly when engaged */
-}
-
+/* ── TYPOGRAPHY ─────────────────────────────── */
 .category {
   font-family: 'Cinzel', serif;
   font-size: 0.6rem;
@@ -324,41 +274,18 @@
   font-size: 1.4rem;
   font-weight: 700;
   color: #6b5027;
-  margin: 0; /* Cleared bottom margins since it's an isolated block header */
+  margin: 0;
 }
 
 .desc {
   font-size: 0.92rem;
   color: #666;
   line-height: 1.75;
-  margin: 16px 0 28px; /* Balanced spacing around entry description text */
+  margin: 16px 0 28px;
 }
 
-@media (max-width: 960px) {
-  .page    { padding: 24px 24px 72px; }
-  .layout  { grid-template-columns: 1fr; gap: 36px; }
-  .gallery { position: static; }
-  
-  /* Disables side scroll lockouts on smaller tablet/mobile viewports */
-  .info { 
-    position: static; 
-    max-height: none; 
-  }
-  .scrollableContent {
-    overflow-y: visible;
-    padding-right: 0;
-  }
-  .stickyHeader {
-    position: static;
-  }
-}
-
-/* ── BLOCKS (specs / details / care) ────────── */
-.specsBlock,
-.detailsBlock,
-.careBlock {
-  margin-bottom: 28px;
-}
+/* ── SPEC BLOCKS ────────────────────────────── */
+.specsBlock, .detailsBlock, .careBlock { margin-bottom: 28px; }
 
 .blockTitle {
   font-family: 'Cinzel', serif;
@@ -371,11 +298,7 @@
   border-bottom: 1px solid #e2ddd7;
 }
 
-/* Spec rows */
-.specsGrid {
-  display: flex;
-  flex-direction: column;
-}
+.specsGrid { display: flex; flex-direction: column; }
 
 .specItem {
   display: flex;
@@ -384,7 +307,6 @@
   padding: 10px 0;
   border-bottom: 1px solid #ece9e3;
 }
-
 .specItem:last-child { border-bottom: none; }
 
 .specLabel {
@@ -406,23 +328,9 @@
   line-height: 1.5;
 }
 
-/* Details text */
-.detailsText {
-  font-size: 0.88rem;
-  color: #666;
-  line-height: 1.78;
-  margin: 0;
-}
+.detailsText { font-size: 0.88rem; color: #666; line-height: 1.78; margin: 0; }
 
-/* Care list */
-.careList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+.careList { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
 
 .careItem {
   font-size: 0.85rem;
@@ -431,23 +339,10 @@
   padding-left: 18px;
   position: relative;
 }
-
-.careItem::before {
-  content: '—';
-  position: absolute;
-  left: 0;
-  color: #c3a26f;
-  font-weight: 700;
-}
+.careItem::before { content: '—'; position: absolute; left: 0; color: #c3a26f; font-weight: 700; }
 
 /* ── CTA ROW ────────────────────────────────── */
-.ctaRow {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin-top: 8px;
-  flex-wrap: wrap;
-}
+.ctaRow { display: flex; gap: 12px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
 
 .inquireBtn {
   flex: 1;
@@ -465,12 +360,7 @@
   text-align: center;
   transition: background 0.25s ease, transform 0.2s ease;
 }
-
-.inquireBtn:hover {
-  background-color: #c3a26f;
-  color: #1a1510;
-  transform: translateY(-2px);
-}
+.inquireBtn:hover { background-color: #c3a26f; color: #1a1510; transform: translateY(-2px); }
 
 .shareBtn {
   font-family: 'Cinzel', serif;
@@ -486,15 +376,15 @@
   transition: all 0.2s ease;
   white-space: nowrap;
 }
-
 .shareBtn:hover { border-color: #c3a26f; color: #c3a26f; }
 
+/* ── STOCK STATES ───────────────────────────── */
+.outOfStockImgDim { filter: grayscale(20%) brightness(90%); }
+.outOfStockText   { color: #e53e3e; font-weight: 600; }
+.outOfStockBtn    { background-color: #4a5568 !important; border-color: #4a5568 !important; }
+
 /* ── RELATED ────────────────────────────────── */
-.related {
-  margin-top: 80px;
-  padding-top: 56px;
-  border-top: 1px solid #e2ddd7;
-}
+.related { margin-top: 80px; padding-top: 56px; border-top: 1px solid #e2ddd7; }
 
 .relatedTitle {
   font-family: 'Cinzel', serif;
@@ -507,52 +397,32 @@
   text-align: center;
 }
 
-.relatedGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 22px;
-}
+.relatedGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
 
 .relatedCard {
   background: #fff;
   border-radius: 12px;
   overflow: hidden;
-  cursor: pointer;              /* Shows a clickable hand icon when hovering */
-  border: none;                 /* Clears default native button frame borders */
-  padding: 0;                   /* Clears default browser container padding */
-  text-align: left;             /* Retains pristine left alignments for labels */
-  width: 100%;                  /* Lets button block fill standard column grid slots */
-  display: block;               /* Changes layout orientation to fit blocks neatly */
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  text-align: left;
+  width: 100%;
+  display: block;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+.relatedCard:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
 
-.relatedImgWrap {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1 / 1;  
-  background-color: #f5f5f5;
-  overflow: hidden;
-}
-
-.relatedCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-}
+.relatedImgWrap { position: relative; width: 100%; aspect-ratio: 1/1; background-color: #f5f5f5; overflow: hidden; }
 
 .relatedOverlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(26, 21, 16, 0.3); /* Premium dark transparency blur */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: absolute; inset: 0;
+  background: rgba(26, 21, 16, 0.3);
+  display: flex; align-items: center; justify-content: center;
   opacity: 0;
   transition: opacity 0.25s ease;
 }
-
-.relatedCard:hover .relatedOverlay {
-  opacity: 1;
-}
+.relatedCard:hover .relatedOverlay { opacity: 1; }
 
 .relatedViewBtn {
   font-family: 'Cinzel', serif;
@@ -565,15 +435,9 @@
   border-radius: 4px;
 }
 
-.relatedImg {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* Keeps image from warping or squishing */
-}
+.relatedImg { width: 100%; height: 100%; object-fit: cover; }
 
-.relatedBody {
-  padding: 14px 16px 18px;
-}
+.relatedBody { padding: 14px 16px 18px; }
 
 .relatedCategory {
   font-family: 'Cinzel', serif;
@@ -584,106 +448,86 @@
   display: block;
   margin-bottom: 4px;
 }
+.relatedName  { font-family: 'Cinzel', serif; font-size: 0.88rem; font-weight: 600; color: #1a1a1a; margin: 0 0 5px; }
+.relatedPrice { font-size: 0.82rem; font-weight: 600; color: #6b5027; margin: 0; }
 
-.relatedName {
-  font-family: 'Cinzel', serif;
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin: 0 0 5px;
-}
-
-.relatedPrice {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: #6b5027;
-  margin: 0;
-}
+.bottomContactBlock { margin-top: 5rem; width: 100%; }
 
 /* ── RESPONSIVE ─────────────────────────────── */
 @media (max-width: 960px) {
-  .page    { padding: 24px 24px 72px; }
-  .layout  { grid-template-columns: 1fr; gap: 36px; }
-  .gallery { position: static; }
-  .relatedGrid { grid-template-columns: repeat(2, 1fr); }
+  .page         { padding: 24px 20px 72px; }
+  .layout       { grid-template-columns: 1fr; gap: 28px; }
+  .gallery      { position: static; }
+  .info         { position: static; max-height: none; }
+  .scrollableContent { overflow-y: visible; padding-right: 0; }
+  .stickyHeader { position: static; }
+  .relatedGrid  { grid-template-columns: repeat(2, 1fr); }
+  .galleryImgRow { flex-direction: column; position: relative; }
+  .galleryHeaderActions { margin-bottom: 10px; }
+  .thumbRow     { flex-direction: row; flex-wrap: wrap; gap: 8px; order: 2; }
+  .mainImgWrap  { order: 1; width: 100%; flex: none; aspect-ratio: 4 / 3; }
+  .zoomHint     { display: none; }
 }
 
 @media (max-width: 600px) {
-  .page       { padding: 16px 16px 64px; }
-  .relatedGrid { grid-template-columns: 1fr; }
-  .ctaRow     { flex-direction: column; }
-  .inquireBtn,
-  .shareBtn   { width: 100%; text-align: center; }
-  .thumb      { width: 56px; height: 56px; }
-  .topBar     { flex-direction: column; align-items: flex-start; }
+  .page         { padding: 12px 14px 60px; }
+  .topBar       { flex-direction: column; align-items: flex-start; gap: 8px; margin-bottom: 16px; }
+  .crumbCurrent { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .galleryHeaderActions { margin-bottom: 10px; }
+  .mainImgWrap  { aspect-ratio: 1 / 1; border-radius: 10px; }
+  .thumb        { width: 52px; height: 52px; border-radius: 6px; }
+  .name         { font-size: clamp(1.3rem, 6vw, 1.8rem); }
+  .price        { font-size: 1.15rem; }
+  .desc         { font-size: 0.88rem; margin: 12px 0 20px; }
+  .specLabel    { font-size: 0.54rem; letter-spacing: 1px; }
+  .specValue    { font-size: 0.8rem; }  
+  .zoomActiveHint { font-size: 0.48rem; padding: 4px 10px; }
+  .related      { margin-top: 48px; padding-top: 32px; }
+  .relatedGrid  { grid-template-columns: 1fr; }
+  .relatedTitle { font-size: 0.9rem; margin-bottom: 20px; }
+  .relatedBody  { padding: 10px 12px 14px; }
+  .relatedName  { font-size: 0.8rem; }
+  .relatedPrice { font-size: 0.76rem; }
 }
 
-/* ── PRICE & STOCK INDICATOR ALIGNMENT ───────── */
-.priceRow {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-top: 4px;
+@media (max-width: 380px) {
+  .page  { padding: 10px 12px 56px; }
+  .name  { font-size: 1.2rem; }
+  .thumb { width: 44px; height: 44px; }
+  .inlineBackBtn { font-size: 0.62rem; letter-spacing: 1.2px; }
 }
 
-.outOfStockBadge {
-  font-family: 'Cinzel', serif;
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  background-color: #7d7265;
-  color: #fff;
-  padding: 4px 12px;
-  border-radius: 4px;
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  display: block;
+/* ── INQUIRE LABEL TOGGLE ── */
+.inquireLabelShort { display: none; }
+.inquireLabelFull  { display: inline; }
+
+@media (max-width: 600px) {
+  /* show short label, hide long one */
+  .inquireLabelFull  { display: none; }
+  .inquireLabelShort { display: inline; }
+
+  /* CTA row — side by side on mobile instead of stacked */
+  .ctaRow {
+    flex-direction: row;   /* keep buttons on one line */
+    gap: 8px;
+  }
+  .inquireBtn {
+    flex: 1;
+    font-size: 0.6rem;
+    letter-spacing: 1.2px;
+    padding: 12px 10px;
+    white-space: nowrap;
+  }
+  .shareBtn {
+    flex-shrink: 0;
+    font-size: 0.6rem;
+    letter-spacing: 1.2px;
+    padding: 12px 14px;
+    white-space: nowrap;
+  }
 }
 
-.backorderNotice {
-  display: block;
-  margin-top: 8px;
-  font-style: italic;
-  color: #8c7e6e;
-}
-
-/* ── RELATED CARD HEADER MUTING RULES ───────── */
-.relatedHeaderRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
-}
-
-.relatedSoldOutMini {
-  font-family: 'Cinzel', serif;
-  font-size: 0.52rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  color: #7d7265;
-}
-
-.bottomContactBlock {
-  margin-top: 5rem;
-  width: 100%;
-}
-
-/* Add a subtle desaturation or transparency block to the main image when sold out */
-.outOfStockImgDim {
-  filter: grayscale(20%) brightness(90%);
-}
-
-/* Alert text coloring for the technical spec grid row */
-.outOfStockText {
-  color: #e53e3e;
-  font-weight: 600;
-}
-
-/* Transform button colors when item is out of stock */
-.outOfStockBtn {
-  background-color: #4a5568 !important; /* Steel-gray instead of premium gold/accent colors */
-  border-color: #4a5568 !important;
+@media (max-width: 380px) {
+  .inquireBtn { font-size: 0.56rem; padding: 11px 8px; }
+  .shareBtn   { padding: 11px 10px; }
 }
