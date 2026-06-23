@@ -137,9 +137,7 @@ useEffect(() => {
 
 
   useEffect(() => {
-    if (currentPage === 'products') {
-      // 🌟 FIX: If a specific category card was clicked, tie the TopBar highlight 
-      // directly to the active hash value so its CSS active rules match up!
+    if (currentPage === 'products') { 
       if (selectedCategory && selectedCategory !== 'all') {
         setActiveLink(`#${selectedCategory}`);
       } else {

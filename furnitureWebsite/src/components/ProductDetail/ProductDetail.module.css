@@ -6,6 +6,13 @@
   background: #F6F5F1;
   overflow-y: auto;
   animation: fadeSlideUp 0.7s ease both;
+  padding-top: 76px;
+}
+
+@media (max-width: 1050px) {
+  .overlay {
+    padding-top: 64px; /* matches TopBar mobile height */
+  }
 }
 
 @keyframes fadeSlideUp {
@@ -27,7 +34,7 @@
 .page {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 40px 40px 96px;
+  padding: 6px 16px 86px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -37,9 +44,8 @@
 /* ── TOP BAR ────────────────────────────────── */
 .topBar {
   display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  margin-bottom: 32px;
+  align-items: center; 
+  margin-bottom: 20px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -463,14 +469,17 @@
   .stickyHeader { position: static; }
   .relatedGrid  { grid-template-columns: repeat(2, 1fr); }
   .galleryImgRow { flex-direction: column; position: relative; }
-  .galleryHeaderActions { margin-bottom: 10px; }
+  .galleryHeaderActions {
+    top: 10px;
+    left: 10px;
+  }
   .thumbRow     { flex-direction: row; flex-wrap: wrap; gap: 8px; order: 2; }
   .mainImgWrap  { order: 1; width: 100%; flex: none; aspect-ratio: 4 / 3; }
   .zoomHint     { display: none; }
 }
 
 @media (max-width: 600px) {
-  .page         { padding: 12px 14px 60px; }
+  .page         { padding: 20px 14px 60px; }
   .topBar       { flex-direction: column; align-items: flex-start; gap: 8px; margin-bottom: 16px; }
   .crumbCurrent { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .galleryHeaderActions { margin-bottom: 10px; }

@@ -81,17 +81,7 @@ const ProductDetail = ({ product, allProducts, onClose, onSelectProduct }) => {
 
   return (
     <div ref={overlayRef} className={styles.overlay}>
-      <div className={styles.page} key={product.id}>
-        {/* ── Top Bar / Breadcrumbs ─────────────────── */}
-        <div className={styles.topBar}>
-          <nav className={styles.breadcrumb} aria-label="breadcrumb">
-            <span className={styles.crumbLink} onClick={onClose}>
-              Collection
-            </span>
-            <span className={styles.crumbSep}>/</span>
-            <span className={styles.crumbCurrent}>{product.name}</span>
-          </nav>
-        </div>
+      <div className={styles.page} key={product.id}> 
 
         {/* ── Main Layout ──────────────────────────── */}
         <div className={styles.layout}>
