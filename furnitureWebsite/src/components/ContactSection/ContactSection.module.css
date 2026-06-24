@@ -9,14 +9,55 @@
 .inner {
   display: flex;
   align-items: flex-start;
-  gap: 64px;
+  /* gap: 64px; */
   max-width: 1200px;
   margin: 0 auto 64px;
 }
 
-/* ── CONTACT COL ────────────────────────────── */
+/* ── BRAND COL (LEFT SIDE) ──────────────────── */
+.brandCol {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.footerLogo {
+  height: 85px; /* Slightly adjusted down so it scales nicely on the left */
+  width: auto;
+  opacity: 0.9;
+}
+
+.brandName {
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #f5ede0;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  line-height: 1.4;
+  max-width: 240px;
+  margin: 0;
+}
+
+.tagline {
+  font-size: 0.82rem;
+  color: rgba(245, 237, 224, 0.45);
+  font-style: italic;
+  margin: 0;
+}
+
+/* ── DIVIDER ────────────────────────────────── */
+.divider {
+  width: 1px;
+  align-self: stretch;
+  background: rgba(195, 162, 111, 0.18);
+}
+
+/* ── CONTACT COL (RIGHT SIDE) ───────────────── */
 .contactCol {
-  flex: 1.2;
+  flex: 1.5;
 }
 
 .eyebrow {
@@ -44,7 +85,7 @@
   color: rgba(245, 237, 224, 0.55);
   line-height: 1.8;
   margin-bottom: 36px;
-  max-width: 420px;
+  max-width: 500px;
 }
 
 .contactItems {
@@ -82,64 +123,19 @@
   color: #f5ede0;
 }
 
-/* ── DIVIDER ────────────────────────────────── */
-.divider {
-  width: 1px;
-  align-self: stretch;
-  background: rgba(195, 162, 111, 0.18);
-}
-
-/* ── BRAND COL ──────────────────────────────── */
-.brandCol {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.footerLogo {
-  height: 110px;
-  width: auto;
-  opacity: 0.9;
-}
-
-.brandName {
-  font-family: 'Cinzel', serif;
-  font-size: 0.72rem;
-  font-weight: 700;
+.contactValueLink {
+  display: block;
+  font-size: 0.9rem;
   color: #f5ede0;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  line-height: 1.4;
-  max-width: 240px;
-  margin: 0;
-}
-
-.tagline {
-  font-size: 0.82rem;
-  color: rgba(245, 237, 224, 0.45);
-  font-style: italic;
-  margin: 0 0 12px;
-}
-
-.footerNav {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.footerLink {
   text-decoration: none;
-  font-family: 'Cinzel', serif;
-  font-size: 0.65rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: rgba(245, 237, 224, 0.5);
-  transition: color 0.25s ease;
+  transition: color 0.2s ease, text-decoration 0.2s ease;
 }
 
-.footerLink:hover { color: #c3a26f; }
+.contactValueLink:hover {
+  color: #c3a26f;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
 
 /* ── COPYRIGHT ──────────────────────────────── */
 .copyright {
@@ -158,10 +154,10 @@
 
 /* ── RESPONSIVE ─────────────────────────────── */
 @media (max-width: 860px) {
-  .section { padding: 80px 24px 40px; }
+  .section { padding: 75px 24px 40px; }
   .inner {
     flex-direction: column;
-    gap: 48px;
+    gap: 42px;
   }
   .divider {
     width: 100%;
