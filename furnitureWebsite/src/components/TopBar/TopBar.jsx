@@ -4,7 +4,6 @@ import logo from '../../assets/No Name.png';
 import mobileLogo from '../../assets/LOGO.webp';
 import { HiMenuAlt3, HiX, HiChevronDown } from 'react-icons/hi';
 
-// 1. Restructured navLinks configuration to support sub-dropdown links
 const navLinks = [
   { href: '#home', label: 'Home', page: 'home' },
   { 
@@ -12,9 +11,7 @@ const navLinks = [
     label: 'Products', 
     page: 'products',
     dropdown: [
-      // 1. All Products -> Goes to the full independent ProductsPage view
       { href: '#products', label: 'All Products', page: 'products' }, 
-      // 2. Our Collections -> Stays/Goes to HomePage and scrolls to ProductsSection
       { href: '#products', label: 'Our Collections', page: 'home' }  
     ]
   },
@@ -23,27 +20,15 @@ const navLinks = [
   { href: '#contact', label: 'Contact', page: 'home' },
 ];
 
-// Polls for an element to exist in the DOM (and be laid out) before resolving.
-// This replaces the old fixed setTimeout(50) guess, which raced against
-// HomePage actually mounting/unmounting its sections when navigating
-// from the Products page back to Home.
 const waitForElement = (selector, { timeout = 1500, interval = 30 } = {}) => {
   return new Promise((resolve) => {
     const start = performance.now();
-
     const tick = () => {
       const el = document.querySelector(selector);
-      if (el) {
-        resolve(el);
-        return;
-      }
-      if (performance.now() - start >= timeout) {
-        resolve(null); // give up gracefully, don't throw
-        return;
-      }
+      if (el) { resolve(el); return; }
+      if (performance.now() - start >= timeout) { resolve(null); return; }
       requestAnimationFrame(() => setTimeout(tick, interval));
     };
-
     tick();
   });
 };
@@ -53,9 +38,10 @@ const TopBar = ({ currentPage = 'home', selectedCategory = 'all', onNavigate, on
   const [isMobile, setIsMobile] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState(null); // Track hovered item on desktop
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const [openMobileDropdown, setOpenMobileDropdown] = useState(null);
   const menuRef = useRef(null);
-  const pendingScrollRef = useRef(null); // Tracks an in-flight scroll request so stale ones can be ignored
+  const pendingScrollRef = useRef(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -68,85 +54,63 @@ const TopBar = ({ currentPage = 'home', selectedCategory = 'all', onNavigate, on
   }, []);
 
   useEffect(() => {
-  const header = menuRef.current;
-  if (!header) return;
-
-  const updateHeaderHeight = () => {
-    document.documentElement.style.setProperty('--header-height', `${header.offsetHeight}px`);
-  };
-
-  updateHeaderHeight();
-  const resizeObserver = new ResizeObserver(updateHeaderHeight);
-  resizeObserver.observe(header);
-
-  return () => resizeObserver.disconnect();
-}, []);
-
- useEffect(() => {
-  const handleScroll = () => {
-    // If the browser scrolls down more than 40px, trigger the navbar styling shift
-    setIsScrolled(window.scrollY > 40);
-  };
-
-  window.addEventListener('scroll', handleScroll, { passive: true });
-  return () => window.removeEventListener('scroll', handleScroll);
-}, []);
-
-// Replace your Intersection Observer useEffect block with this exact setup:
-useEffect(() => {
-  if (currentPage !== 'home') return undefined;
-
-  // FIX: Explicitly target the root browser viewport screen
-  const observerOptions = {
-    root: null, 
-    rootMargin: '-50% 0px -50% 0px',
-    threshold: 0,
-  };
-
-  const observerCallback = (entries) => {
-    entries.forEach((entry) => {
-      if (
-        entry.isIntersecting &&
-        document.getElementById('products-page') === null &&
-        !pendingScrollRef.current
-      ) {
-        const sectionId = `#${entry.target.id}`;
-        setActiveLink(sectionId);
-      }
-    });
-  };
-
-  let observer = null;
-
-  const timeoutId = setTimeout(() => {
-    if (document.getElementById('products-page')) return;
-
-    observer = new IntersectionObserver(observerCallback, observerOptions);
-    
-    const sections = document.querySelectorAll('#home, #products, #categories, #about, #contact');
-    sections.forEach((section) => {
-      observer.observe(section);
-    });
-  }, 150);
-
-  return () => {
-    clearTimeout(timeoutId);
-    if (observer) observer.disconnect();
-  };
-}, [currentPage]);
-
+    const header = menuRef.current;
+    if (!header) return;
+    const updateHeaderHeight = () => {
+      document.documentElement.style.setProperty('--header-height', `${header.offsetHeight}px`);
+    };
+    updateHeaderHeight();
+    const resizeObserver = new ResizeObserver(updateHeaderHeight);
+    resizeObserver.observe(header);
+    return () => resizeObserver.disconnect();
+  }, []);
 
   useEffect(() => {
-    if (currentPage === 'products') { 
+    const handleScroll = () => setIsScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (currentPage !== 'home') return undefined;
+    const observerOptions = {
+      root: null,
+      rootMargin: '-50% 0px -50% 0px',
+      threshold: 0,
+    };
+    const observerCallback = (entries) => {
+      entries.forEach((entry) => {
+        if (
+          entry.isIntersecting &&
+          document.getElementById('products-page') === null &&
+          !pendingScrollRef.current
+        ) {
+          setActiveLink(`#${entry.target.id}`);
+        }
+      });
+    };
+    let observer = null;
+    const timeoutId = setTimeout(() => {
+      if (document.getElementById('products-page')) return;
+      observer = new IntersectionObserver(observerCallback, observerOptions);
+      const sections = document.querySelectorAll('#home, #products, #categories, #about, #contact');
+      sections.forEach((section) => observer.observe(section));
+    }, 150);
+    return () => {
+      clearTimeout(timeoutId);
+      if (observer) observer.disconnect();
+    };
+  }, [currentPage]);
+
+  useEffect(() => {
+    if (currentPage === 'products') {
       if (selectedCategory && selectedCategory !== 'all') {
         setActiveLink(`#${selectedCategory}`);
       } else {
         setActiveLink('#products');
       }
     } else if (currentPage === 'home') {
-      if (!pendingScrollRef.current) {
-        setActiveLink('#home');
-      }
+      if (!pendingScrollRef.current) setActiveLink('#home');
     }
   }, [currentPage, selectedCategory]);
 
@@ -162,25 +126,19 @@ useEffect(() => {
     event.preventDefault();
     setIsMenuOpen(false);
     setOpenDropdown(null);
+    setOpenMobileDropdown(null);
 
-    // Clear product modal popups if navigating away
-    if (onClearProduct) {
-      onClearProduct();
-    }
+    if (onClearProduct) onClearProduct();
 
-    // Case A: User selected "All Products" (page is explicitly set to 'products')
     if (page === 'products') {
-      pendingScrollRef.current = null; // no scroll needed, we're switching the whole page view
+      pendingScrollRef.current = null;
       onNavigate?.('products');
       setActiveLink('#products');
       return;
     }
 
-    // Case B: User selected "Our Collections", "Categories", or other home anchors
     const scrollToken = Symbol(href);
     pendingScrollRef.current = scrollToken;
-
-    // Track if we are leaping across different pages
     const isCrossPageLeap = currentPage !== 'home';
 
     onNavigate?.('home');
@@ -192,12 +150,7 @@ useEffect(() => {
     if (pendingScrollRef.current !== scrollToken) return;
 
     if (targetSection) {
-      // 1. Initial scroll to target location
       targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-      // 2. Layout Shift Protection Loop:
-      // If we jumped from another page, follow up on layout shifts caused by 
-      // incoming Supabase requests expanding sections above us.
       if (isCrossPageLeap) {
         let checkCount = 0;
         const layoutInterval = setInterval(() => {
@@ -206,17 +159,12 @@ useEffect(() => {
             targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
           if (checkCount >= 5) clearInterval(layoutInterval);
-        }, 250); // Re-align smoothly over 1.25 seconds as data resolves
+        }, 250);
       }
     }
 
-    // 3. Dynamic Protection Window:
-    // Keep the IntersectionObserver locked out longer for cross-page navigation
-    // to give smooth scroll and data rendering time to finalize layout boundaries.
     setTimeout(() => {
-      if (pendingScrollRef.current === scrollToken) {
-        pendingScrollRef.current = null;
-      }
+      if (pendingScrollRef.current === scrollToken) pendingScrollRef.current = null;
     }, isCrossPageLeap ? 1500 : 500);
   };
 
@@ -232,7 +180,7 @@ useEffect(() => {
           {navLinks.map((link) => {
             const hasDropdown = !!link.dropdown;
             return (
-              <div 
+              <div
                 key={link.href}
                 className={styles.navItemWrapper}
                 onMouseEnter={() => !isMobile && hasDropdown && setOpenDropdown(link.label)}
@@ -241,14 +189,27 @@ useEffect(() => {
                 <a
                   href={link.href}
                   className={`${styles.navItem} ${activeLink === link.href ? styles.active : ''} ${hasDropdown ? styles.hasDropdown : ''}`}
-                  onClick={(event) => handleLinkClick(link.href, link.page, event)}
+                  onClick={(event) => {
+                    if (isMobile && hasDropdown) {
+                      event.preventDefault();
+                      setOpenMobileDropdown(prev => prev === link.label ? null : link.label);
+                    } else {
+                      handleLinkClick(link.href, link.page, event);
+                    }
+                  }}
                 >
                   {link.label}
-                  {hasDropdown && <HiChevronDown className={styles.chevronIcon} />}
+                  {hasDropdown && (
+                    <HiChevronDown
+                      className={`${styles.chevronIcon} ${isMobile && openMobileDropdown === link.label ? styles.chevronOpen : ''}`}
+                    />
+                  )}
                 </a>
 
-                {/* Dropdown Menu Overlay Canvas Layer */}
-                {hasDropdown && (openDropdown === link.label || isMobile) && (
+                {hasDropdown && (
+                  (!isMobile && openDropdown === link.label) ||
+                  (isMobile && openMobileDropdown === link.label)
+                ) && (
                   <div className={`${styles.dropdownMenu} ${isMobile ? styles.mobileDropdown : ''}`}>
                     {link.dropdown.map((subLink, subIdx) => (
                       <a
@@ -269,7 +230,10 @@ useEffect(() => {
 
         <button
           className={styles.menuIcon}
-          onClick={() => setIsMenuOpen(v => !v)}
+          onClick={() => {
+            setIsMenuOpen(v => !v);
+            setOpenMobileDropdown(null);
+          }}
           aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
         >
           {isMenuOpen ? <HiX /> : <HiMenuAlt3 />}

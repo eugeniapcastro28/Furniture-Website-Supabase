@@ -119,8 +119,11 @@
 
   /* Keeps background solid only while user actively expands the full mobile dropdown drawer */
   .topBarContainer:has(.mobileOpen) {
-    background-color: rgba(246, 245, 241, 0.98);
-  }
+  background-color: rgb(246, 245, 241);   /* ← was 0.98 alpha, make it 1.0 solid */
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
 
   .inner {
     padding: 0 16px;
@@ -146,10 +149,12 @@
     gap: 0;
     
     /* Matching mobile drawer frosted texture */
-    background-color: rgba(246, 245, 241, 0.85); 
+    background-color: rgb(246, 245, 241);   
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     box-shadow: 0 12px 30px rgba(107, 80, 39, 0.1);
     border-top: 1px solid rgba(195, 162, 111, 0.2);
     border-bottom: 1px solid rgba(195, 162, 111, 0.2);
@@ -299,4 +304,8 @@
   width: 100%;
   height: 20px;     /* Covers the zone between the nav bar and the menu */
   background: transparent; /* Invisible to the eye, but catches the mouse pointer */
+}
+.chevronOpen {
+  transform: rotate(180deg);
+  color: #c3a26f;
 }
