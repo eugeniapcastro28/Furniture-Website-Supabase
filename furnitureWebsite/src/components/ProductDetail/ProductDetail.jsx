@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./ProductDetail.module.css";
 import ContactSection from "../ContactSection/ContactSection";
+import { AddToInquiryBtn } from '../InquirySystem/InquirySystem';
 
 // Add this helper at the top of ProductDetail.jsx
 const optimizeImage = (url, width = 800, quality = 75) => {
@@ -292,6 +293,7 @@ const ProductDetail = ({ product, allProducts, onClose, onSelectProduct }) => {
                     {isOutOfStock ? "Inquire Restock" : "Inquire"}
                   </span>
                 </a>
+                <AddToInquiryBtn product={product} />
                 <button
                   className={styles.shareBtn}
                   onClick={() =>

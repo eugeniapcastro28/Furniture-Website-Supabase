@@ -10,6 +10,7 @@ import AboutSection from './components/AboutSection/AboutSection';
 import ContactSection from './components/ContactSection/ContactSection';
 import ProductDetail from './components/ProductDetail/ProductDetail';
 import AdminDashboard from './components/AdminDashboard/AdminDashboard';
+import { InquiryProvider, InquiryBasket } from './components/InquirySystem/InquirySystem';
 
 import { supabase } from './config/supabaseClient'; 
 
@@ -101,10 +102,11 @@ const App = () => {
 }
 
   return (
+  <InquiryProvider>
     <div className={styles.page} data-scroll-container>
       <TopBar 
         currentPage={currentView} 
-        selectedCategory={selectedCategory} // 🌟 ADDED PROP HERE
+        selectedCategory={selectedCategory}
         onNavigate={(view) => {
           setCurrentView(view);
           if (view === 'home') setSelectedCategory('all'); 
@@ -123,7 +125,6 @@ const App = () => {
                 setCurrentView('products');
               }}
             />
-            {/* 🌟 ADDED PROPS HERE: Send the navigation and selection state controllers down */}
             <CategoriesSection 
               onNavigate={setCurrentView}
               onSetCategory={setSelectedCategory}
@@ -131,7 +132,6 @@ const App = () => {
             <AboutSection />
           </>
         ) : (
-          /* 🌟 ADDED PROP HERE: Pass the state category directly into your standalone catalog page */
           <ProductsPage
             products={dbProducts}
             initialCategory={selectedCategory}
@@ -154,8 +154,11 @@ const App = () => {
           onSelectProduct={setSelectedProduct} 
         />
       )}
+
+      <InquiryBasket />
     </div>
-  );
+  </InquiryProvider>
+);
 };
 
 export default App;

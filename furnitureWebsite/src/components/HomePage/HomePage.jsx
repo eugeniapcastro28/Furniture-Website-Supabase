@@ -103,7 +103,7 @@ const HomePage = () => {
           src={active.image_url}
           alt={active.name}
           /* 🌟 CRITICAL FIXES FOR LIGHTHOUSE LCP: */
-          fetchpriority={active.id === initialLCPId ? "high" : "auto"}
+          fetchPriority={active.id === initialLCPId ? "high" : "auto"}
           loading={active.id === initialLCPId ? "eager" : "lazy"}
           width="1400"
           height="788"

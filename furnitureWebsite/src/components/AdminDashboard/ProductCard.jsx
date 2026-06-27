@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './AdminDashboard.module.css';
-import { HiPencil, HiTrash } from 'react-icons/hi';
+import { HiPencil, HiTrash } from 'react-icons/hi'; 
 
 const ProductCard = ({ product, onEdit, onDelete }) => {
   // Resolve display image from string, array, or comma-separated
