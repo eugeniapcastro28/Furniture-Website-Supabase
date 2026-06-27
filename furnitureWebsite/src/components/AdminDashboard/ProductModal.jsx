@@ -46,7 +46,8 @@ const ProductModal = ({ isOpen, product, onClose, onRefresh, showToast = [] }) =
   const [origin, setOrigin] = useState('');
   const [leadTime, setLeadTime] = useState('');
   const [warranty, setWarranty] = useState('');
-  const [details, setDetails] = useState('');
+  const [detailsList, setDetailsList] = useState([]);
+  const [currentDetailInput, setCurrentDetailInput] = useState('');
   const [careList, setCareList] = useState([]);
   const [currentCareInput, setCurrentCareInput] = useState('');
   const [uploading, setUploading] = useState(false);
@@ -128,10 +129,22 @@ useEffect(() => {
       setColor(product.color || '');
       setOrigin(product.origin || '');
       setLeadTime(product.lead_time || product.leadTime || '');
-      setWarranty(product.warranty || '');
-      setDetails(product.details || '');
-      setCareList(Array.isArray(product.care) ? product.care : []);
+      setWarranty(product.warranty || ''); 
 
+      if (Array.isArray(product.details)) {
+        setDetailsList(product.details);
+      } else if (typeof product.details === 'string' && product.details.trim()) {
+        try {
+          const parsed = JSON.parse(product.details);
+          setDetailsList(Array.isArray(parsed) ? parsed : [product.details]);
+        } catch {
+          setDetailsList([product.details]);
+        }
+      } else {
+        setDetailsList([]);
+      }
+      setCareList(Array.isArray(product.care) ? product.care : []);
+ 
       const featuredVal = product.featured ?? product.isFeatured;
       const parsedFeatured = featuredVal != null ? Boolean(featuredVal) : true;
       setIsFeatured(parsedFeatured);
@@ -156,12 +169,13 @@ useEffect(() => {
 
       const stockVal = product.in_stock ?? product.inStock;
       setInStock(stockVal != null ? Boolean(stockVal) : true);
-    } else {
+    } else { 
       setName(''); setCategory(''); setDescription(''); setPrice('');
       setMaterial(''); setDimensions(''); setWeight(''); setFinish('');
       setColor(''); setOrigin(''); setLeadTime(''); setWarranty('');
-      setDetails(''); setCareList([]); setImageQueue([]);
-      setInStock(true); setIsFeatured(true); setDisplayOrder(''); // 🌟 Reset to empty
+      setDetailsList([]); setCurrentDetailInput('');
+      setCareList([]);
+      setInStock(true); setIsFeatured(true); setDisplayOrder('');
     }
 
     setActivePreviewIndex(0);
@@ -258,6 +272,15 @@ useEffect(() => {
 
   const handleRemoveCareTip = (idx) => setCareList(prev => prev.filter((_, i) => i !== idx));
 
+  const handleAddDetailTip = () => {
+  if (!currentDetailInput.trim()) return;
+  setDetailsList(prev => [...prev, currentDetailInput.trim()]);
+  setCurrentDetailInput('');
+};
+
+const handleRemoveDetailTip = (idx) => 
+  setDetailsList(prev => prev.filter((_, i) => i !== idx));
+
   const handleSaveProduct = async (e) => {
     e.preventDefault();
     if (!imageQueue.length) {
@@ -293,7 +316,7 @@ useEffect(() => {
       const payload = {
         name, category, description, price: parseFloat(price), material,
         image_url: finalizedUrls, dimensions, weight, finish, color, origin,
-        lead_time: leadTime, warranty, details, care: careList,
+        lead_time: leadTime, warranty, details: detailsList, care: careList,
         in_stock: Boolean(inStock), featured: Boolean(isFeatured),
         // 🌟 If item isn't featured, store it as NULL (or 0 depending on your DB preference)
         display_order: isFeatured ? (parseInt(displayOrder, 10) || null) : null 
@@ -495,14 +518,43 @@ useEffect(() => {
             </div>
 
             <h4 className={styles.sectionHeader}>Description & Details</h4>
-            <div className={styles.inputGroup}>
-              <label>Short Description</label>
-              <textarea rows="2" value={description} onChange={e => setDescription(e.target.value)} required placeholder="Brief introductory summary..." />
-            </div>
-            <div className={styles.inputGroup}>
-              <label>Extended Details</label>
-              <textarea rows="3" value={details} onChange={e => setDetails(e.target.value)} placeholder="Structural highlights, features..." />
-            </div>
+              <div className={styles.inputGroup}>
+                <label>Short Description</label>
+                <textarea rows="2" value={description} onChange={e => setDescription(e.target.value)} required placeholder="Brief introductory summary..." />
+              </div>
+
+              <h4 className={styles.sectionHeader}>Extended Details</h4>
+              <div className={styles.careSection}>
+                <div className={styles.careInputRow}>
+                  <input
+                    type="text"
+                    value={currentDetailInput}
+                    onChange={e => setCurrentDetailInput(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleAddDetailTip())}
+                    placeholder="e.g. Premium Material: 100% Solid Mahogany Wood"
+                    className={styles.careInput}
+                  />
+                  <button type="button" onClick={handleAddDetailTip} className={styles.careAddBtn}>Add</button>
+                </div>
+
+                {detailsList.length > 0 && (
+                  <ul className={styles.careBadgeList}>
+                    {detailsList.map((tip, idx) => (
+                      <li key={idx} className={styles.careBadgeItem}>
+                        <span className={styles.careBadgeDot} />
+                        <span className={styles.careBadgeText}>{tip}</span>
+                        <button type="button" onClick={() => handleRemoveDetailTip(idx)} className={styles.careBadgeRemove}>
+                          <HiX />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {detailsList.length === 0 && (
+                  <p className={styles.careEmptyHint}>No details added yet — press Enter or click Add.</p>
+                )}
+              </div>
 
             <h4 className={styles.sectionHeader}>Care & Maintenance</h4>
             <div className={styles.careSection}>

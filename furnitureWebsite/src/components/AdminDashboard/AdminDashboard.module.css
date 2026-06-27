@@ -1,112 +1,123 @@
-/* ─── Page Shell ─── */
+/* ═══════════════════════════════════════
+   SHELL — full viewport, sidebar layout
+═══════════════════════════════════════ */
 .adminContainer {
-  max-width: 1400px;
-  margin: 0 auto;
-  min-height: 100vh;
-  background: #f7f4ef;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: #0f0f0f;
   font-family: inherit;
 }
 
 /* ═══════════════════════════════════════
-   TOP BAR
+   SIDEBAR
 ═══════════════════════════════════════ */
-.topBar {
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: #141414;
+  border-right: 1px solid #262626;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 40px;
-  height: 64px;
-  background: #1a1a1a;
-  position: sticky;
-  top: 0;
-  z-index: 200;
-  gap: 24px;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
 }
 
-/* Brand */
-.topBarLeft {
+.sidebarBrand {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-shrink: 0;
+  padding: 20px 20px 18px;
+  border-bottom: 1px solid #222;
 }
 
 .brandMark {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   background: #c3a26f;
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: serif;
+  font-family: Georgia, serif;
   font-size: 1rem;
   font-weight: 400;
   flex-shrink: 0;
+  border-radius: 6px;
 }
 
 .brandText {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  line-height: 1.1;
+  line-height: 1.15;
 }
 
 .brandName {
-  color: #fff;
-  font-family: serif;
+  color: #f0f0f0;
+  font-family: Georgia, serif;
   font-size: 0.9rem;
   font-weight: 400;
 }
 
 .brandSub {
-  color: #666;
-  font-size: 0.6rem;
+  color: #555;
+  font-size: 0.58rem;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  font-weight: 500;
 }
 
-/* Tab Nav — centered */
-.tabNav {
+/* Nav */
+.sidebarNav {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 2px;
+  padding: 16px 10px;
   flex: 1;
-  justify-content: center;
+}
+
+.navLabel {
+  font-size: 0.58rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #444;
+  padding: 4px 10px 8px;
+  margin-top: 8px;
 }
 
 .tabBtn {
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 0 20px;
-  height: 64px;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
   background: none;
   border: none;
-  border-bottom: 2px solid transparent;
-  color: #777;
+  border-radius: 6px;
+  color: #666;
   font-family: inherit;
   font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.4px;
+  font-weight: 500;
   cursor: pointer;
-  transition: color 0.18s, border-color 0.18s;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
   white-space: nowrap;
 }
 
 .tabBtn:hover {
+  background: #1e1e1e;
   color: #ccc;
 }
 
 .tabBtnActive {
-  color: #fff;
-  border-bottom-color: #c3a26f;
+  background: #1e1e1e;
+  color: #c3a26f;
 }
 
 .tabIcon {
-  font-size: 0.95rem;
-  opacity: 0.75;
+  font-size: 1rem;
+  flex-shrink: 0;
+  opacity: 0.7;
 }
 
 .tabBtnActive .tabIcon {
@@ -114,25 +125,103 @@
   color: #c3a26f;
 }
 
-/* Right slot — action button */
-.topBarRight {
-  flex-shrink: 0;
-  min-width: 140px;
-  display: flex;
-  justify-content: flex-end;
+.sidebarFooter {
+  padding: 14px 10px 16px;
+  border-top: 1px solid #1e1e1e;
 }
+
+.sidebarBackLink {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: #555;
+  font-size: 0.76rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: inherit;
+  width: 100%;
+  text-align: left;
+  text-decoration: none;
+  transition: color 0.15s, background 0.15s;
+}
+
+.sidebarBackLink:hover {
+  color: #aaa;
+  background: #1e1e1e;
+}
+
+/* ═══════════════════════════════════════
+   MAIN CONTENT AREA
+═══════════════════════════════════════ */
+.mainArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #f7f5f0;
+}
+
+/* ── Top Bar (inside main) ── */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  height: 56px;
+  background: #fff;
+  border-bottom: 1px solid #ece8e0;
+  flex-shrink: 0;
+  gap: 16px;
+}
+
+.topBarLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.pageEyebrow {
+  display: block;
+  color: #c3a26f;
+  font-size: 0.58rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.pageTitle {
+  margin: 0;
+  color: #1a1a1a;
+  font-family: Georgia, serif;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.topBarRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.pageSubtitle { display: none; } /* hidden — info is in the sidebar */
 
 .primaryBtn {
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 9px 18px;
+  gap: 6px;
+  padding: 8px 16px;
   background: #c3a26f;
   color: #fff;
   border: none;
-  font-size: 0.78rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
   text-transform: uppercase;
   cursor: pointer;
   transition: background 0.2s;
@@ -141,81 +230,40 @@
 
 .primaryBtn:hover { background: #a8865a; }
 
-/* ═══════════════════════════════════════
-   PAGE TITLE STRIP
-═══════════════════════════════════════ */
-.pageTitleStrip {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  padding: 32px 40px 24px;
-  background: #fdfbf7;
-  border-bottom: 1px solid #eadecb;
-  gap: 24px;
-}
-
-.pageEyebrow {
-  display: block;
-  color: #c3a26f;
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 5px;
-}
-
-.pageTitle {
-  margin: 0;
-  color: #1a1a1a;
-  font-family: serif;
-  font-size: 1.9rem;
-  font-weight: 400;
-  line-height: 1;
-}
-
-.pageSubtitle {
-  margin: 0;
-  color: #999;
-  font-size: 0.85rem;
-  line-height: 1.5;
-  max-width: 420px;
-  text-align: right;
-}
-
-/* ═══════════════════════════════════════
-   TAB CONTENT
-═══════════════════════════════════════ */
+/* ── Tab Content Scroll Area ── */
 .tabContent {
-  padding: 36px 40px 60px;
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 28px 40px;
 }
 
 /* ═══════════════════════════════════════
-   FILTER STRIP (inventory)
+   FILTER STRIP
 ═══════════════════════════════════════ */
 .filterStrip {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 36px;
-  padding-bottom: 28px;
-  border-bottom: 1px solid #eadecb;
+  gap: 6px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e8e2d8;
 }
 
 .chip {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 7px 16px;
-  border: 1px solid #e0d5c4;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1px solid #ddd5c4;
   background: #fff;
   color: #6b5027;
   font-family: inherit;
-  font-size: 0.78rem;
+  font-size: 0.73rem;
   font-weight: 600;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
   cursor: pointer;
-  border-radius: 3px;
-  transition: all 0.18s;
+  border-radius: 20px;
+  transition: all 0.15s;
 }
 
 .chip:hover { border-color: #c3a26f; color: #c3a26f; }
@@ -232,13 +280,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  border-radius: 9px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
   background: rgba(195, 162, 111, 0.15);
   color: #c3a26f;
-  font-size: 0.68rem;
+  font-size: 0.64rem;
   font-weight: 700;
 }
 
@@ -250,16 +298,16 @@
 /* ═══════════════════════════════════════
    SECTION LABELS
 ═══════════════════════════════════════ */
-.stockSection  { margin-bottom: 56px; }
-.outSection    { padding-top: 40px; border-top: 1px dashed #ddd; }
+.stockSection  { margin-bottom: 40px; }
+.outSection    { padding-top: 28px; border-top: 1px dashed #ddd; }
 
 .sectionLabel {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
-  font-family: serif;
-  font-size: 1.05rem;
+  gap: 10px;
+  margin-bottom: 16px;
+  font-family: Georgia, serif;
+  font-size: 0.95rem;
   font-weight: 400;
   color: #1a1a1a;
 }
@@ -268,7 +316,7 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: #eadecb;
+  background: #e8e2d8;
 }
 
 .sectionLabelMuted { color: #aaa; }
@@ -276,15 +324,15 @@
 
 .sectionCount {
   font-family: inherit;
-  font-size: 0.67rem;
+  font-size: 0.63rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: #c3a26f;
   background: #fdf4e7;
   border: 1px solid #eadecb;
-  padding: 2px 9px;
-  border-radius: 2px;
+  padding: 2px 8px;
+  border-radius: 10px;
 }
 
 .sectionCountMuted {
@@ -294,30 +342,32 @@
 }
 
 /* ═══════════════════════════════════════
-   PRODUCT GRID + CARD
+   PRODUCT GRID
 ═══════════════════════════════════════ */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
 }
 
 .card {
   background: #fff;
-  border: 1px solid #eadecb;
+  border: 1px solid #ece8e0;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   transition: box-shadow 0.2s, transform 0.2s;
 }
 
 .card:hover {
-  box-shadow: 0 10px 28px rgba(140, 118, 92, 0.1);
+  box-shadow: 0 6px 20px rgba(140, 118, 92, 0.12);
   transform: translateY(-2px);
 }
 
 .imageWrap {
   position: relative;
-  height: 260px;
+  height: 200px;
   background: #f5f5f5;
   overflow: hidden;
 }
@@ -330,31 +380,32 @@
   transition: transform 0.4s ease;
 }
 
-.card:hover .cardImg { transform: scale(1.03); }
+.card:hover .cardImg { transform: scale(1.04); }
 
 .outOfStockBadge {
   position: absolute;
-  top: 12px;
-  left: 12px;
+  top: 10px;
+  left: 10px;
   background: #b33939;
   color: #fff;
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  padding: 4px 9px;
+  letter-spacing: 0.8px;
+  padding: 3px 8px;
+  border-radius: 3px;
 }
 
 .adminActionsOverlay {
   position: absolute;
   inset: 0;
-  background: rgba(26, 26, 26, 0.48);
+  background: rgba(20, 20, 20, 0.52);
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   opacity: 0;
-  transition: opacity 0.22s;
+  transition: opacity 0.2s;
 }
 
 .imageWrap:hover .adminActionsOverlay { opacity: 1; }
@@ -363,10 +414,11 @@
 .deleteActionBtn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 9px 16px;
+  gap: 5px;
+  padding: 7px 14px;
   border: none;
-  font-size: 0.78rem;
+  border-radius: 5px;
+  font-size: 0.73rem;
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.15s;
@@ -378,7 +430,7 @@
 .deleteActionBtn:hover { transform: scale(1.05); }
 
 .cardBody {
-  padding: 18px 18px 16px;
+  padding: 14px 14px 12px;
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -386,26 +438,27 @@
 
 .cardCategory {
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
   color: #c3a26f;
-  font-size: 0.67rem;
+  font-size: 0.62rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.2px;
 }
 
 .cardName {
-  margin: 0 0 7px;
+  margin: 0 0 5px;
   color: #1a1a1a;
-  font-family: serif;
-  font-size: 1.15rem;
+  font-family: Georgia, serif;
+  font-size: 1rem;
   font-weight: 400;
+  line-height: 1.3;
 }
 
 .cardDesc {
-  margin: 0 0 14px;
-  color: #777;
-  font-size: 0.82rem;
+  margin: 0 0 10px;
+  color: #888;
+  font-size: 0.78rem;
   line-height: 1.5;
   flex: 1;
   display: -webkit-box;
@@ -418,13 +471,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 11px;
+  padding-top: 9px;
   border-top: 1px solid #f0ece4;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
 }
 
-.cardMaterial { color: #aaa; font-style: italic; }
-.cardPrice    { color: #1a1a1a; font-weight: 700; font-size: 0.95rem; }
+.cardMaterial { color: #bbb; font-style: italic; }
+.cardPrice    { color: #1a1a1a; font-weight: 700; font-size: 0.88rem; }
 
 /* ═══════════════════════════════════════
    STATES
@@ -437,8 +490,8 @@
 }
 
 .loaderDot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   background: #c3a26f;
   border-radius: 50%;
   animation: dotPulse 1.2s ease-in-out infinite;
@@ -457,19 +510,20 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 80px 40px;
-  border: 1px dashed #e0d5c4;
+  padding: 60px 40px;
+  border: 1px dashed #ddd5c4;
   background: #fdfbf7;
-  gap: 12px;
+  border-radius: 8px;
+  gap: 10px;
   text-align: center;
 }
 
-.emptyIcon { font-size: 2.4rem; color: #ddd; }
+.emptyIcon { font-size: 2rem; color: #ddd; }
 
 .emptyState p {
   margin: 0;
-  font-family: serif;
-  font-size: 1rem;
+  font-family: Georgia, serif;
+  font-size: 0.95rem;
   color: #bbb;
 }
 
@@ -478,8 +532,8 @@
 ═══════════════════════════════════════ */
 .toastContainer {
   position: fixed;
-  top: 80px;
-  right: 24px;
+  top: 72px;
+  right: 20px;
   z-index: 10050;
   pointer-events: none;
 }
@@ -488,16 +542,16 @@
   pointer-events: auto;
   background: #fff;
   border: 1px solid #eadecb;
-  box-shadow: 0 12px 32px rgba(140, 118, 92, 0.14);
-  width: 320px;
-  padding: 14px 18px;
-  border-radius: 4px;
-  position: relative;
-  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  width: 300px;
+  padding: 12px 16px;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   gap: 3px;
-  animation: toastIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: toastIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  overflow: hidden;
+  position: relative;
 }
 
 .toastError   { border-left: 3px solid #b33939; }
@@ -510,13 +564,13 @@
 }
 
 .toastTitle {
-  font-family: serif;
-  font-size: 0.95rem;
+  font-family: Georgia, serif;
+  font-size: 0.88rem;
   font-weight: 600;
   color: #1a1a1a;
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
 }
 
 .toastSuccess .toastIcon { color: #c3a26f; }
@@ -526,7 +580,7 @@
   background: none;
   border: none;
   color: #bbb;
-  font-size: 1.1rem;
+  font-size: 1rem;
   cursor: pointer;
   padding: 0;
   line-height: 1;
@@ -537,8 +591,8 @@
 
 .toastMsg {
   margin: 0 0 3px;
-  font-size: 0.8rem;
-  color: #777;
+  font-size: 0.76rem;
+  color: #888;
   line-height: 1.4;
 }
 
@@ -570,3 +624,8 @@
   from { width: 100%; }
   to   { width: 0%;   }
 }
+
+/* ═══════════════════════════════════════
+   TAB NAV (kept for compat, hidden now)
+═══════════════════════════════════════ */
+.tabNav { display: none; }

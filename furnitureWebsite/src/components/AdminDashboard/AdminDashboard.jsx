@@ -5,13 +5,19 @@ import ProductModal from './ProductModal';
 import HeroManager from './HeroManager';
 import CategoryManager from './CategoryManager';
 import styles from './AdminDashboard.module.css';
-import { HiPlus, HiCollection, HiPhotograph, HiTag, HiViewGrid } from 'react-icons/hi';
+import { HiPlus, HiCollection, HiPhotograph, HiTag, HiViewGrid, HiArrowLeft } from 'react-icons/hi';
 
 const TABS = [
   { id: 'inventory',  label: 'Inventory',   icon: HiViewGrid   },
   { id: 'hero',       label: 'Hero Slides',  icon: HiPhotograph },
   { id: 'categories', label: 'Categories',   icon: HiTag        },
 ];
+
+const TAB_META = {
+  inventory:  { eyebrow: 'Storefront',  title: 'Inventory'   },
+  hero:       { eyebrow: 'Homepage',    title: 'Hero Slides'  },
+  categories: { eyebrow: 'Homepage',    title: 'Categories'   },
+};
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab]           = useState('inventory');
@@ -81,12 +87,14 @@ const AdminDashboard = () => {
   const available  = filteredProducts.filter(p => p.in_stock !== false && p.inStock !== false);
   const outOfStock = filteredProducts.filter(p => p.in_stock === false || p.inStock === false);
 
+  const meta = TAB_META[activeTab];
+
   return (
     <div className={styles.adminContainer}>
 
-      {/* ── Top Header Bar ── */}
-      <header className={styles.topBar}>
-        <div className={styles.topBarLeft}>
+      {/* ── Sidebar ── */}
+      <aside className={styles.sidebar}>
+        <div className={styles.sidebarBrand}>
           <span className={styles.brandMark}>A</span>
           <div className={styles.brandText}>
             <span className={styles.brandName}>Artisan</span>
@@ -94,7 +102,8 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        <nav className={styles.tabNav}>
+        <nav className={styles.sidebarNav}>
+          <span className={styles.navLabel}>Manage</span>
           {TABS.map(tab => {
             const Icon = tab.icon;
             return (
@@ -110,112 +119,109 @@ const AdminDashboard = () => {
           })}
         </nav>
 
-        <div className={styles.topBarRight}>
-          {activeTab === 'inventory' && (
-            <button className={styles.primaryBtn} onClick={openCreateModal}>
-              <HiPlus /> New Product
-            </button>
-          )}
+        <div className={styles.sidebarFooter}>
+          <a href="/" className={styles.sidebarBackLink}>
+            <HiArrowLeft /> Back to Showroom
+          </a>
         </div>
-      </header>
+      </aside>
 
-      {/* ── Page Title Strip ── */}
-      <div className={styles.pageTitleStrip}>
-        <div>
-          <span className={styles.pageEyebrow}>
-            {activeTab === 'inventory' ? 'Storefront' : 'Homepage'}
-          </span>
-          <h1 className={styles.pageTitle}>
-            {TABS.find(t => t.id === activeTab)?.label}
-          </h1>
-        </div>
-        <p className={styles.pageSubtitle}>
-          {activeTab === 'inventory'  && 'Manage, update, and publish showroom listings.'}
-          {activeTab === 'hero'       && 'Manage the rotating hero images displayed on the homepage.'}
-          {activeTab === 'categories' && 'Manage the category cards shown in the homepage browse section.'}
-        </p>
-      </div>
+      {/* ── Main Area ── */}
+      <div className={styles.mainArea}>
 
-      {/* ── Tab Content ── */}
-      <div className={styles.tabContent}>
-
-        {/* INVENTORY */}
-        {activeTab === 'inventory' && (
-          <>
-            <div className={styles.filterStrip}>
-              <button
-                className={`${styles.chip} ${activeCategory === 'all' ? styles.chipActive : ''}`}
-                onClick={() => setActiveCategory('all')}
-              >
-                All <span className={styles.chipCount}>{products.length}</span>
+        {/* Top Bar */}
+        <header className={styles.topBar}>
+          <div className={styles.topBarLeft}>
+            <span className={styles.pageEyebrow}>{meta.eyebrow}</span>
+            <h1 className={styles.pageTitle}>{meta.title}</h1>
+          </div>
+          <div className={styles.topBarRight}>
+            {activeTab === 'inventory' && (
+              <button className={styles.primaryBtn} onClick={openCreateModal}>
+                <HiPlus /> New Product
               </button>
-              {dbCategories.map(cat => {
-                const count = products.filter(p =>
-                  (p.category || '').trim().toLowerCase() === cat.slug.trim().toLowerCase()
-                ).length;
-                return (
-                  <button
-                    key={cat.slug}
-                    className={`${styles.chip} ${activeCategory === cat.slug ? styles.chipActive : ''}`}
-                    onClick={() => setActiveCategory(cat.slug)}
-                  >
-                    {cat.label}
-                    <span className={styles.chipCount}>{count}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {loading ? (
-              <div className={styles.loader}>
-                <span className={styles.loaderDot} />
-                <span className={styles.loaderDot} />
-                <span className={styles.loaderDot} />
-              </div>
-            ) : filteredProducts.length === 0 ? (
-              <div className={styles.emptyState}>
-                <HiCollection className={styles.emptyIcon} />
-                <p>{activeCategory === 'all' ? 'No products yet. Add your first item.' : `No products in "${activeCategory}".`}</p>
-              </div>
-            ) : (
-              <>
-                {available.length > 0 && (
-                  <section className={styles.stockSection}>
-                    <div className={styles.sectionLabel}>
-                      <span>Active Listings</span>
-                      <span className={styles.sectionCount}>{available.length}</span>
-                    </div>
-                    <div className={styles.grid}>
-                      {available.map(p => (
-                        <ProductCard key={p.id} product={p} onEdit={openEditModal} onDelete={handleDelete} />
-                      ))}
-                    </div>
-                  </section>
-                )}
-                {outOfStock.length > 0 && (
-                  <section className={styles.outSection}>
-                    <div className={`${styles.sectionLabel} ${styles.sectionLabelMuted}`}>
-                      <span>Out of Stock</span>
-                      <span className={`${styles.sectionCount} ${styles.sectionCountMuted}`}>{outOfStock.length}</span>
-                    </div>
-                    <div className={styles.grid}>
-                      {outOfStock.map(p => (
-                        <ProductCard key={p.id} product={p} onEdit={openEditModal} onDelete={handleDelete} />
-                      ))}
-                    </div>
-                  </section>
-                )}
-              </>
             )}
-          </>
-        )}
+          </div>
+        </header>
 
-        {/* HERO */}
-        {activeTab === 'hero' && <HeroManager onToast={showToast} />}
+        {/* Content */}
+        <div className={styles.tabContent}>
 
-        {/* CATEGORIES */}
-        {activeTab === 'categories' && <CategoryManager onToast={showToast} />}
+          {/* INVENTORY */}
+          {activeTab === 'inventory' && (
+            <>
+              <div className={styles.filterStrip}>
+                <button
+                  className={`${styles.chip} ${activeCategory === 'all' ? styles.chipActive : ''}`}
+                  onClick={() => setActiveCategory('all')}
+                >
+                  All <span className={styles.chipCount}>{products.length}</span>
+                </button>
+                {dbCategories.map(cat => {
+                  const count = products.filter(p =>
+                    (p.category || '').trim().toLowerCase() === cat.slug.trim().toLowerCase()
+                  ).length;
+                  return (
+                    <button
+                      key={cat.slug}
+                      className={`${styles.chip} ${activeCategory === cat.slug ? styles.chipActive : ''}`}
+                      onClick={() => setActiveCategory(cat.slug)}
+                    >
+                      {cat.label}
+                      <span className={styles.chipCount}>{count}</span>
+                    </button>
+                  );
+                })}
+              </div>
 
+              {loading ? (
+                <div className={styles.loader}>
+                  <span className={styles.loaderDot} />
+                  <span className={styles.loaderDot} />
+                  <span className={styles.loaderDot} />
+                </div>
+              ) : filteredProducts.length === 0 ? (
+                <div className={styles.emptyState}>
+                  <HiCollection className={styles.emptyIcon} />
+                  <p>{activeCategory === 'all' ? 'No products yet. Add your first item.' : `No products in "${activeCategory}".`}</p>
+                </div>
+              ) : (
+                <>
+                  {available.length > 0 && (
+                    <section className={styles.stockSection}>
+                      <div className={styles.sectionLabel}>
+                        <span>Active Listings</span>
+                        <span className={styles.sectionCount}>{available.length}</span>
+                      </div>
+                      <div className={styles.grid}>
+                        {available.map(p => (
+                          <ProductCard key={p.id} product={p} onEdit={openEditModal} onDelete={handleDelete} />
+                        ))}
+                      </div>
+                    </section>
+                  )}
+                  {outOfStock.length > 0 && (
+                    <section className={styles.outSection}>
+                      <div className={`${styles.sectionLabel} ${styles.sectionLabelMuted}`}>
+                        <span>Out of Stock</span>
+                        <span className={`${styles.sectionCount} ${styles.sectionCountMuted}`}>{outOfStock.length}</span>
+                      </div>
+                      <div className={styles.grid}>
+                        {outOfStock.map(p => (
+                          <ProductCard key={p.id} product={p} onEdit={openEditModal} onDelete={handleDelete} />
+                        ))}
+                      </div>
+                    </section>
+                  )}
+                </>
+              )}
+            </>
+          )}
+
+          {activeTab === 'hero'       && <HeroManager onToast={showToast} />}
+          {activeTab === 'categories' && <CategoryManager onToast={showToast} />}
+
+        </div>
       </div>
 
       {/* ── Product Modal ── */}

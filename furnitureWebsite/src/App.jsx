@@ -96,18 +96,9 @@ const App = () => {
     );
   }
 
-  if (isAdminRoute) {
-    return (
-      <div className={styles.page}>
-        <main style={{ padding: '20px' }}>
-          <a href="/" style={{ display: 'inline-block', color: '#c3a26f', textDecoration: 'none', marginBottom: '20px', fontFamily: 'sans-serif', fontSize: '0.95rem' }}>
-            ← Back to Viewing Showroom
-          </a>
-          <AdminDashboard />
-        </main>
-      </div>
-    );
-  }
+ if (isAdminRoute) {
+  return <AdminDashboard />;
+}
 
   return (
     <div className={styles.page} data-scroll-container>

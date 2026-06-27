@@ -239,13 +239,30 @@ const ProductDetail = ({ product, allProducts, onClose, onSelectProduct }) => {
                 </div>
               </div>
 
-              {/* Product Details */}
-              {product.details && (
-                <div className={styles.detailsBlock}>
-                  <h2 className={styles.blockTitle}>Product Details</h2>
-                  <p className={styles.detailsText}>{product.details}</p>
-                </div>
-              )}
+              {(() => {
+                let detailsArr = [];
+                if (Array.isArray(product.details)) {
+                  detailsArr = product.details;
+                } else if (typeof product.details === 'string' && product.details.trim()) {
+                  try {
+                    const parsed = JSON.parse(product.details);
+                    detailsArr = Array.isArray(parsed) ? parsed : [product.details];
+                  } catch {
+                    detailsArr = [product.details];
+                  }
+                }
+
+                return detailsArr.length > 0 ? (
+                  <div className={styles.detailsBlock}>
+                    <h2 className={styles.blockTitle}>Product Details</h2>
+                    <ul className={styles.careList}>
+                      {detailsArr.map((tip, i) => (
+                        <li key={i} className={styles.careItem}>{tip}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null;
+              })()}
 
               {/* Care Instructions */}
               {product.care?.length > 0 && (
